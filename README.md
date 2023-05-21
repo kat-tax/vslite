@@ -5,9 +5,9 @@
 ### Getting started
 
 ```sh
-pnpm i           # Install dependencies
-pnpm run dev     # Run local dev server
-pnpm run build   # Build production bundle
+pnpm i       # Install dependencies
+pnpm dev     # Run local dev server
+pnpm build   # Build production bundle
 ```
 
 ### Powered by...

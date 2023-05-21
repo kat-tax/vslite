@@ -22,11 +22,12 @@ export function DockRoot() {
       </iframe>
     </>
   );
+  // TODO
   return (
     <DockviewReact
       onReady={(e: DockviewReadyEvent) => console.log(e)}
       watermarkComponent={DockWatermark}
-      className="dockview-theme-light"
+      className="dockview-theme-dark"
       components={{
         default: (props: IDockviewPanelProps<{someProps: string}>) => {
           return <div>{props.params.someProps}</div>;
