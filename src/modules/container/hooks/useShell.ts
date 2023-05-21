@@ -15,8 +15,11 @@ export function useShell() {
     if (container) return;
     console.log('Booting...');
     WebContainer.boot().then(cont => {
-      const term = new Terminal({convertEol: true});
       const addon = new FitAddon();
+      const term = new Terminal({
+        convertEol: true,
+        theme: {background: '#181818'},
+      });
       term.loadAddon(addon);
       term.open(root);
       //cont.mount(files);
@@ -32,7 +35,11 @@ export function useShell() {
           setProcess(shell);
         });
       if (preview) {
-        cont.on('server-ready', (_port, url) => {
+        cont.on('port', (port, url) => {
+          console.log('Port ready!', url, port);
+        });
+        cont.on('server-ready', (port, url) => {
+          console.log('Server ready!', url, port);
           preview.src = url;
         });
       }
