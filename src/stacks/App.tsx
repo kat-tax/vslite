@@ -26,16 +26,24 @@ export function App() {
   };
 
   const openPreview = (url: string, port: number) => {
-    api.current?.addPanel({
-      id: port.toString(),
-      title: `Port: ${port}`,
-      component: 'preview',
-      params: {url},
-      position: {
-        direction: 'right',
-        referencePanel: 'terminal',
-      },
-    });
+    const panel = api.current?.getPanel(port.toString());
+    const title = `Port: ${port}`;
+    const path = `${url}?${Date.now()}`;
+    if (panel) {
+      panel.api.updateParameters({url: path});
+      panel.api.setTitle(title);
+    } else {
+      api.current?.addPanel({
+        id: port.toString(),
+        title: `Port: ${port}`,
+        component: 'preview',
+        params: {url: path},
+        position: {
+          direction: 'right',
+          referencePanel: 'terminal',
+        },
+      });
+    }
   };
 
   const editor = useEditor();
