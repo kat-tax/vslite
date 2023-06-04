@@ -1,8 +1,8 @@
 import ReactDOM from 'react-dom/client';
-import {DockRoot} from './modules/app/components/DockRoot';
+import {App} from './stacks/App';
 
 import 'react-complex-tree/lib/style-modern.css';
 import './index.css';
 
 const el = document.getElementById('root');
-el && ReactDOM.createRoot(el).render(<DockRoot/>);
+el && ReactDOM.createRoot(el).render(<App/>);

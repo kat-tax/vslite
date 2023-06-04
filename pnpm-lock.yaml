@@ -13,6 +13,9 @@ dependencies:
   isomorphic-git:
     specifier: ^1.23.0
     version: 1.23.0
+  monaco-editor:
+    specifier: ^0.38.0
+    version: 0.38.0
   react:
     specifier: ^18.2.0
     version: 18.2.0
