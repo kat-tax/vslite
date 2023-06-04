@@ -72,6 +72,23 @@ export function App() {
     }
   };
 
+  const renameFile = async (path: string, name: string) => {
+    // Get contents of file
+    const contents = await shell?.container?.fs.readFile(path);
+    // Remove file
+    await shell?.container?.fs.rm(path);
+    // Write new file
+    const dirPath = path.split('/').slice(0, -1).join('/');
+    const newPath = `${dirPath}/${name}`;
+    await shell?.container?.fs.writeFile(newPath, contents || new Uint8Array());
+    // Update editor panel
+    const panel = api.current?.getPanel(path);
+    if (panel) {
+      panel.api.updateParameters({path: newPath});
+      panel.api.setTitle(name);
+    }
+  };
+
   const panels: D.PanelCollection<D.IDockviewPanelProps> = {
     terminal: (props: D.IDockviewPanelProps<{}>) => {
       return (
@@ -95,6 +112,7 @@ export function App() {
         <Tree
           fs={props.params.fs}
           onTriggerItem={openFile}
+          onRenameItem={renameFile}
         />
       );
     },

@@ -9,6 +9,7 @@ import type {FileSystemAPI} from '@webcontainer/api';
 interface TreeProps {
   fs: FileSystemAPI,
   onTriggerItem: (path: string, name: string) => void,
+  onRenameItem: (path: string, name: string) => void,
 }
 
 const root: TreeItem<string> = {
@@ -60,7 +61,6 @@ export function Tree(props: TreeProps) {
   const refresh = async () => {
     const data = await readDir('.', 'root', {});
     provider.current.updateItems(data);
-    console.log('tree', data);
   };
 
   useEffect(() => {
@@ -72,6 +72,7 @@ export function Tree(props: TreeProps) {
       dataProvider={provider.current}
       getItemTitle={item => item.data}
       onPrimaryAction={item => props.onTriggerItem(item.index.toString(), item.data)}
+      onRenameItem={(item, name) => props.onRenameItem(item.index.toString(), name)}
       viewState={{}}>
       <TreeView treeId="files" rootItem="root" treeLabel="Explorer"/>
     </UncontrolledTreeEnvironment>
