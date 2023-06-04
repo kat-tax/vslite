@@ -4,15 +4,14 @@ import {useRef, useEffect} from 'react';
 import type {DockviewPanelApi} from 'dockview';
 import type {ShellInstance} from '../hooks/useShell';
 
-
 interface ShellProps {
-  panel: DockviewPanelApi,
   instance: ShellInstance,
+  panel: DockviewPanelApi,
 }
 
 export function Shell(props: ShellProps) {
-  const root = useRef<HTMLDivElement>(null);
   const init = useRef(false);
+  const root = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
     if (!init.current && root.current) {

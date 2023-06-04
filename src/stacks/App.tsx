@@ -1,5 +1,4 @@
 import 'dockview/dist/styles/dockview.css';
-
 import {useEffect, useRef} from 'react';
 import {useShell} from '../hooks/useShell';
 import {useEditor} from '../hooks/useEditor';
@@ -7,12 +6,13 @@ import {DockviewReact} from 'dockview';
 import {Watermark} from './Watermark';
 import {Editor} from './Editor';
 import {Shell} from './Shell';
+import {Tree} from './Tree';
 
 import type * as D from 'dockview';
 import type {FileSystemAPI} from '@webcontainer/api';
 
 export function App() {
-  const started = useRef(false);
+  const init = useRef(false);
   const api = useRef<D.DockviewApi | null>(null);
 
   const initDockview = (event: D.DockviewReadyEvent) => {
@@ -41,18 +41,53 @@ export function App() {
   const editor = useEditor();
   const shell = useShell(openPreview);
 
+  const openFile = async (path: string, name: string) => {
+    const contents = await shell?.container?.fs.readFile(path);
+    const panel = api.current?.getPanel(path);
+    if (panel) {
+      panel.api.setActive();
+    } else {
+      api.current?.addPanel({
+        component: 'editor',
+        id: path,
+        title: name,
+        params: {
+          path,
+          contents,
+          fs: shell.container?.fs,
+        },
+        position: {
+          direction: 'right',
+          referencePanel: 'tree',
+        },
+      });
+    }
+  };
+
   const panels: D.PanelCollection<D.IDockviewPanelProps> = {
-    editor: (props: D.IDockviewPanelProps<{path: string, fs: FileSystemAPI}>) => {
+    terminal: (props: D.IDockviewPanelProps<{}>) => {
+      return (
+        <Shell
+          instance={shell}
+          panel={props.api}
+        />
+      );
+    },
+    editor: (props: D.IDockviewPanelProps<{path: string, fs: FileSystemAPI, contents?: string}>) => {
       return (
         <Editor
           path={props.params.path}
+          contents={props.params.contents}
           fs={props.params.fs}
         />
       );
     },
-    terminal: (props: D.IDockviewPanelProps<{}>) => {
+    tree: (props: D.IDockviewPanelProps<{fs: FileSystemAPI}>) => {
       return (
-        <Shell instance={shell} panel={props.api}/>
+        <Tree
+          fs={props.params.fs}
+          onTriggerItem={openFile}
+        />
       );
     },
     preview: (props: D.IDockviewPanelProps<{url: string}>) => {
@@ -73,21 +108,21 @@ export function App() {
   };
 
   useEffect(() => {
-    if (!started.current && api.current && editor && shell?.container?.fs) {
+    if (!init.current && api.current && editor && shell?.container?.fs) {
       api.current.addPanel({
-        component: 'editor',
-        id: 'untitled-1',
-        title: 'Untitled-1.ts',
+        component: 'tree',
+        id: 'tree',
+        title: 'Explorer',
         params: {
-          path: './Untitled-1.ts',
           fs: shell.container.fs,
         },
+        tabComponent: 'lockedTab',
         position: {
-          direction: 'above',
+          direction: 'left',
           referencePanel: 'terminal',
         },
       });
-      started.current = true;
+      init.current = true;
     }
   }, [editor, shell]);
 

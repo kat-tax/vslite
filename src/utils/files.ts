@@ -1,6 +1,15 @@
 import type {FileSystemTree} from '@webcontainer/api';
 
 export const files: FileSystemTree = {
+  'test': {
+    directory: {
+      'test.txt': {
+        file: {
+          contents: `blah blah blah`,
+        },
+      },
+    }
+  },
   'index.js': {
     file: {
       contents: `

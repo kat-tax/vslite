@@ -1,8 +1,10 @@
 import Monaco from '@monaco-editor/react';
+
 import type {FileSystemAPI} from '@webcontainer/api';
 
 interface EditorProps {
   path: string,
+  contents?: string,
   fs: FileSystemAPI,
 }
 
