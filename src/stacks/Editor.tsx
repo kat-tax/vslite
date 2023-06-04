@@ -1,21 +1,27 @@
 import Monaco from '@monaco-editor/react';
+import type {FileSystemAPI} from '@webcontainer/api';
 
-interface CodeProps {
-  instance: any,
+interface EditorProps {
   path: string,
-  contents?: string,
-  language?: string,
-  updateContents: (path: string, contents?: string) => void,
+  fs: FileSystemAPI,
 }
 
-export function Editor(props: CodeProps) {
+export function Editor(props: EditorProps) {
   return (
     <Monaco
-      theme={'vs-dark'}
+      theme="vs-dark"
+      language="typescript"
       path={props.path}
-      value={props.contents}
-      language={props.language}
-      onChange={value => props.updateContents(props.path, value)}
+      options={{readOnly: true}}
+      onMount={async (editor) => {
+        let contents = '';
+        try {contents = await props.fs.readFile(props.path, 'utf-8')} catch (e) {}
+        editor.setValue(contents);
+        editor.updateOptions({readOnly: false});
+      }}
+      onChange={async (value?: string) => {
+        props.fs.writeFile(props.path, value || '', 'utf-8');
+      }}
     />
   );
 }
