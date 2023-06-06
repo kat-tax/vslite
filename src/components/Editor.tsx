@@ -14,7 +14,7 @@ export function Editor(props: EditorProps) {
     <Monaco
       theme="vs-dark"
       path={props.path}
-      options={{readOnly: true}}
+      options={{readOnly: true, padding: {top: 10}}}
       language={getLanguageFromFileName(props.path)}
       onMount={(editor, monaco) => initEditor(editor, monaco, props.fs, props.path)}
       onChange={(value) => props.fs.writeFile(props.path, value || '', 'utf-8')}

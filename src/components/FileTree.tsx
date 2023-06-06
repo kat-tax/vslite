@@ -42,11 +42,7 @@ export function FileTree(props: FileTreeProps) {
           onPrimaryAction={item => props.onTriggerItem(item.index.toString(), item.data)}
           onRenameItem={(item, name) => props.onRenameItem(item.index.toString(), name)}
           viewState={{}}>
-          <Tree
-            treeId="filetree"
-            treeLabel="Explorer"
-            rootItem="root"
-          />
+          <Tree treeId="filetree" treeLabel="Explorer" rootItem="root"/>
         </UncontrolledTreeEnvironment>
       </div>
     </div>

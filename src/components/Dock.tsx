@@ -55,6 +55,7 @@ export function Dock() {
       components={sectionComponents}
       proportionalLayout={false}
       onReady={event => {
+        sections.current = event.api;
         event.api.addPanel({
           id: 'content',
           component: 'content',
@@ -71,7 +72,6 @@ export function Dock() {
             referencePanel: 'content',
           },
         });
-        sections.current = event.api;
       }}
     />
   );

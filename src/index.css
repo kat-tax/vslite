@@ -30,3 +30,7 @@ iframe {
 .split-view-container .view-container {
   background-color: transparent;
 }
+
+.xterm {
+  padding: 10px;
+}
