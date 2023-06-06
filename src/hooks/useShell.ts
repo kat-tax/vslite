@@ -2,57 +2,47 @@ import {useState, useCallback} from 'react';
 import {WebContainer} from '@webcontainer/api';
 import {Terminal} from 'xterm';
 import {FitAddon} from 'xterm-addon-fit';
-import {files} from '../utils/files';
+import {startFiles} from '../utils/webcontainer';
+import {colors} from '../theme/tokens';
 
 import type {WebContainerProcess} from '@webcontainer/api';
-import type {DockviewPanelApi} from 'dockview';
+import type {GridviewPanelApi} from 'dockview';
 
 export interface ShellInstance {
   container: WebContainer | null,
   terminal: Terminal | null,
   process: WebContainerProcess | null,
-  start: (root: HTMLElement, panel: DockviewPanelApi) => void,
+  start: (root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => void,
 }
 
-export function useShell(onServerReady?: (url: string, port: number) => void): ShellInstance {
+export type ServerReadyHandler = (url: string, port: number) => void;
+
+export function useShell(): ShellInstance {
   const [container, setContainer] = useState<WebContainer | null>(null);
   const [terminal, setTerminal] = useState<Terminal | null>(null);
   const [process, setProcess] = useState<WebContainerProcess | null>(null);
 
-  const start = useCallback((root: HTMLElement, panel: DockviewPanelApi) => {
+  const start = useCallback((root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => {
     if (container) return;
     console.log('Booting...');
-    WebContainer.boot().then(cont => {
+    WebContainer.boot().then(shell => {
       const addon = new FitAddon();
-      const term = new Terminal({
-        convertEol: true,
-        theme: {background: '#181818'},
+      const terminal = new Terminal({convertEol: true, theme: {background: colors.background}});
+      const {cols, rows} = terminal;
+      terminal.loadAddon(addon);
+      terminal.open(root);
+      shell.mount(startFiles);
+      shell.spawn('jsh', {terminal: {cols, rows}}).then(shell => {
+        const input = shell.input.getWriter();
+        terminal.onData(data => {input.write(data)});
+        shell.output.pipeTo(new WritableStream({write(data) {terminal.write(data)}}));
+        setProcess(shell);
       });
-      term.loadAddon(addon);
-      term.open(root);
-      cont.mount(files);
-      cont.spawn('jsh', {terminal: {cols: term.cols, rows: term.rows}})
-        .then(shell => {
-          const input = shell.input.getWriter();
-          term.onData(data => {input.write(data)});
-          shell.output.pipeTo(
-            new WritableStream({
-              write(data) {term.write(data)},
-            })
-          );
-          setProcess(shell);
-        });
-      cont.on('port', (port) => {
-        console.log('Port opened:', port);
-      });
-      cont.on('server-ready', (port, url) => {
-        console.log('Server ready:', url, port);
-        onServerReady && onServerReady(url, port);
-      });
-      setContainer(cont);
-      setTerminal(term);
       panel.onDidDimensionsChange(() => addon.fit());
       addon.fit();
+      shell.on('server-ready', (port, url) => onServerReady && onServerReady(url, port));
+      setContainer(shell);
+      setTerminal(terminal);
       console.log('Done.');
     });
   }, []);

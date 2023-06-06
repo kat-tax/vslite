@@ -2,6 +2,10 @@
 
 > More than Monaco, less than VSCode
 
+### Demo
+
+https://vslite.dev
+
 ### Getting started
 
 ```sh
@@ -12,9 +16,8 @@ pnpm build   # Build production bundle
 
 ### Powered by...
 
-- [Dockview](https://dockview.dev) (ui panels)
-- [React Complex Tree](https://rct.lukasbach.com) (ui tree)
-- [Monaco Editor React](https://monaco-react.surenatoyan.com) (editor)
-- [WebContainers](https://webcontainers.io) (shell)
-- [Isomorphic Git](https://isomorphic-git.org/) (git)
-- [Xterm.js](https://xtermjs.org) (terminal)
+- [WebContainers](https://webcontainers.io) _(the shell)_
+- [Monaco React](https://monaco-react.surenatoyan.com) _(the editor)_
+- [Xterm.js](https://xtermjs.org) _(the terminal)_
+- [Dockview](https://dockview.dev) _(the docking ui)_
+- [React Complex Tree](https://rct.lukasbach.com) _(the file tree)_

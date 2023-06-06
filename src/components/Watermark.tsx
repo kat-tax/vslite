@@ -3,7 +3,7 @@ import type {IWatermarkPanelProps} from 'dockview';
 export function Watermark(_props: IWatermarkPanelProps) {
   return (
     <div style={styles.watermark}>
-      <span>Press new tab or <span style={styles.hint}>[Option+N]</span></span>
+      {/*<span>Press new tab or <span style={styles.hint}>[Option+N]</span></span>*/}
     </div>
   );
 }

@@ -25,3 +25,8 @@ iframe {
   border: none;
   background: black;
 }
+
+/* CUSTOM */
+.split-view-container .view-container {
+  background-color: transparent;
+}
