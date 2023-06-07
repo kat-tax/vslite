@@ -27,14 +27,35 @@ export function openFileTree(fs: FileSystemAPI, section: PaneviewApi, content: D
   filetree.headerVisible = false;
 }
 
-export function openUntitledEditor(fs: FileSystemAPI, content: DockviewApi) {
-  const path = './Untitled.ts';
-  content.addPanel({
+export function openUntitledEditor(fs: FileSystemAPI, api: DockviewApi) {
+  const path = './Untitled';
+  api.addPanel({
     id: path,
-    title: 'Untitled.ts',
+    title: 'Untitled',
     component: 'editor',
-    params: {fs, path, contents: ''},
+    params: {fs, path},
   });
+}
+
+export async function openFileEditor(file: FileSystemFileHandle, fs: FileSystemAPI, api: DockviewApi) {
+  const path = `./${file.name}`;
+  const contents = await (await file.getFile()).text();
+  await fs.writeFile(path, contents, 'utf-8');
+  api.addPanel({
+    id: path,
+    title: file.name,
+    component: 'editor',
+    params: {fs, path},
+  });
+}
+
+// TODO
+export async function openFolder(fs: FileSystemAPI, api: DockviewApi) {
+  // @ts-ignore
+  const dir = await globalThis.showDirectoryPicker();
+  for await (const entry of dir.values()) {
+    console.log(entry);
+  }
 }
 
 export function createPreviewOpener(api: DockviewApi) {

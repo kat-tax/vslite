@@ -2,6 +2,7 @@ import {useRef, useEffect} from 'react';
 import {Tree, UncontrolledTreeEnvironment} from 'react-complex-tree';
 import {EventEmitter} from 'react-complex-tree/src/EventEmitter';
 import {getDirAsTree} from '../utils/webcontainer';
+import {useDarkMode} from '../hooks/useDarkMode';
 // import {diff} from 'deep-object-diff';
 
 import type * as RCT from 'react-complex-tree';
@@ -24,6 +25,7 @@ const root: RCT.TreeItem<string> = {
 };
 
 export function FileTree(props: FileTreeProps) {
+  const isDark = useDarkMode();
   const provider = useRef<TreeProvider<string>>(new TreeProvider({root}));
 
   const refresh = async () => {
@@ -39,7 +41,7 @@ export function FileTree(props: FileTreeProps) {
 
   return (
     <div style={{overflow: 'scroll'}}>
-      <div className="rct-dark">
+      <div className={isDark ? 'rct-dark' : 'rct-default'}>
         <UncontrolledTreeEnvironment
           canRename
           canSearch

@@ -28,6 +28,7 @@ export function getLanguageFromFileName(name: string) {
     case 'json': return 'json';
     case 'html': return 'html';
     case 'css': return 'css';
+    default: return 'plaintext';
   }
 }
 

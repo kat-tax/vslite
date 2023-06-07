@@ -6,6 +6,9 @@ import {FileTree} from './FileTree';
 import {Terminal} from './Terminal';
 import {Watermark} from './Watermark';
 import {useShell} from '../hooks/useShell';
+import {useDarkMode} from '../hooks/useDarkMode';
+import {useLaunchQueue} from '../hooks/useLaunchQueue';
+
 import * as dock from '../utils/dock';
 
 import type {DockviewApi, GridviewApi, PaneviewApi, PanelCollection, IGridviewPanelProps, IPaneviewPanelProps, IDockviewPanelProps} from 'dockview';
@@ -16,11 +19,13 @@ export function Dock() {
   const shell = useShell();
   const monaco = useMonaco();
   const initTerm = useRef(false);
-  const initEditor = useRef(false);
+  const initLaunch = useRef(false);
   const initFileTree = useRef(false);
   const sections = useRef<GridviewApi>();
   const content = useRef<DockviewApi>();
   const panels = useRef<PaneviewApi>();
+  const launch = useLaunchQueue();
+  const isDark = useDarkMode();
 
   // Open terminal when shell is ready
   useEffect(() => {
@@ -40,18 +45,36 @@ export function Dock() {
     }
   }, [shell]);
 
-  // Open blank editor when Monaco and FS are ready
+  // Handle launch queue from PWA
   useEffect(() => {
-    if (initEditor.current) return;
-    if (monaco && shell.container?.fs && content.current) {
-      initEditor.current = true;
-      dock.openUntitledEditor(shell.container.fs, content.current);
+    if (initLaunch.current) return;
+    const fs = shell?.container?.fs;
+    const api = content.current;
+    if (!fs || !api || !monaco) return;
+    // Open files
+    if (launch.files.length > 0) {
+      launch.files.forEach(file => {
+        dock.openFileEditor(file, fs, api);
+      });
+    // Execute action
+    } else if (launch.action) {
+      switch (launch.action) {
+        case 'open_folder': {
+          // TODO: trigger via a dialog due to security
+          dock.openFolder(fs, api);
+          break;
+        }
+      }
+    // Open blank file
+    } else {
+      dock.openUntitledEditor(fs, api);
     }
-  }, [monaco, shell]);
+    initLaunch.current = true;
+  }, [monaco, launch, shell]);
 
   return (
     <GridviewReact
-      className="dockview-theme-dark"
+      className={isDark ? 'dockview-theme-dark' : 'dockview-theme-light'}
       components={sectionComponents}
       proportionalLayout={false}
       onReady={event => {
@@ -78,11 +101,10 @@ export function Dock() {
 }
 
 const contentComponents: PanelCollection<IDockviewPanelProps> = {
-  editor: (props: IDockviewPanelProps<{fs: FileSystemAPI, path: string, contents?: string}>) => (
+  editor: (props: IDockviewPanelProps<{fs: FileSystemAPI, path: string}>) => (
     <Editor
       fs={props.params.fs}
       path={props.params.path}
-      contents={props.params.contents}
     />
   ),
   preview: (props: IDockviewPanelProps<{url: string}>) => (
@@ -100,14 +122,12 @@ const sectionComponents: PanelCollection<IGridviewPanelProps> = {
   ),
   panes: (props: IGridviewPanelProps<{api: React.MutableRefObject<PaneviewApi>}>) => (
     <PaneviewReact
-      className="dockview-theme-dark"
       components={paneComponents}
       onReady={event => {props.params.api.current = event.api}}
     />
   ),
   content: (props: IGridviewPanelProps<{api: React.MutableRefObject<DockviewApi>}>) => (
     <DockviewReact
-      className="dockview-theme-dark"
       watermarkComponent={Watermark}
       components={contentComponents}
       onReady={event => {props.params.api.current = event.api}}

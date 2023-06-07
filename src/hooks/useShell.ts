@@ -1,9 +1,9 @@
-import {useState, useCallback} from 'react';
+import {useState, useCallback, useEffect} from 'react';
 import {WebContainer} from '@webcontainer/api';
 import {Terminal} from 'xterm';
 import {FitAddon} from 'xterm-addon-fit';
 import {startFiles} from '../utils/webcontainer';
-import {colors} from '../theme/tokens';
+import {useDarkMode} from '../hooks/useDarkMode';
 
 import type {WebContainerProcess} from '@webcontainer/api';
 import type {GridviewPanelApi} from 'dockview';
@@ -21,13 +21,24 @@ export function useShell(): ShellInstance {
   const [container, setContainer] = useState<WebContainer | null>(null);
   const [terminal, setTerminal] = useState<Terminal | null>(null);
   const [process, setProcess] = useState<WebContainerProcess | null>(null);
+  const isDark = useDarkMode();
+  const theme = isDark
+    ? {background: '#181818'}
+    : {background: '#f3f3f3', foreground: '#000', cursor: '#666'};
+
+  useEffect(() => {
+    if (terminal) {
+      terminal.options.theme = theme;
+      terminal.refresh(0, terminal.rows - 1);
+    }
+  }, [isDark]);
 
   const start = useCallback((root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => {
     if (container) return;
     console.log('Booting...');
     WebContainer.boot().then(shell => {
       const addon = new FitAddon();
-      const terminal = new Terminal({convertEol: true, theme: {background: colors.background}});
+      const terminal = new Terminal({convertEol: true, theme});
       const {cols, rows} = terminal;
       terminal.loadAddon(addon);
       terminal.open(root);

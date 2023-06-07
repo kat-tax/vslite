@@ -1,0 +1,70 @@
+{
+  "name": "VSLite",
+  "short_name": "Code",
+  "description": "More than Monaco, less than VSCode",
+  "start_url": "/?source=pwa",
+  "id": "/?source=pwa",
+  "lang": "en-US",
+  "theme_color": "#181818",
+  "background_color": "#181818",
+  "orientation": "any",
+  "display": "standalone",
+  "display_override": ["window-controls-overlay"],
+  "categories": ["productivity", "utilities", "education"],
+  "scope": "/",
+  "icons": [
+		{
+			"src": "/code-192.png",
+			"type": "image/png",
+			"sizes": "192x192"
+		},
+		{
+			"src": "/code-192-maskable.png",
+			"type": "image/png",
+			"sizes": "192x192",
+			"purpose": "maskable"
+		},
+		{
+			"src": "/code-512.png",
+			"type": "image/png",
+			"sizes": "512x512"
+		},
+		{
+			"src": "/code-512-maskable.png",
+			"type": "image/png",
+			"sizes": "512x512",
+			"purpose": "maskable"
+		}
+  ],
+  "file_handlers": [
+    {
+      "action": "/",
+      "accept": {
+        "application/json": [".json"]
+      }
+    }
+  ],
+  "shortcuts": [
+    {
+      "name": "Open Folder…",
+      "url": "/?action=open_folder",
+      "description": "Open a folder on your device"
+    }
+  ],
+  "share_target": {
+    "action": "/?action=open_share",
+    "enctype": "multipart/form-data",
+    "method": "POST",
+    "params": {
+      "title": "name",
+      "text": "description",
+      "url": "link",
+      "files": [
+        {
+          "name": "source",
+          "accept": ["text/*", ".*"]
+        }
+      ]
+    }
+  }
+}

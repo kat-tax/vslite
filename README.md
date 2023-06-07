@@ -2,7 +2,7 @@
 
 > More than Monaco, less than VSCode
 
-### Demo
+### Live version
 
 https://vslite.dev
 
@@ -21,3 +21,8 @@ pnpm build   # Build production bundle
 - [Xterm.js](https://xtermjs.org) _(the terminal)_
 - [Dockview](https://dockview.dev) _(the docking ui)_
 - [React Complex Tree](https://rct.lukasbach.com) _(the file tree)_
+
+### Community
+
+- [Discord](https://discord.gg/ty2CstRYZ6)
+- [Roadmap](./ROADMAP.md)
