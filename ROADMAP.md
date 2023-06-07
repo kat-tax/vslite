@@ -1,12 +1,12 @@
 # General
 - Add hotkey system
 - Add project system
-- Add "Open Folder..." action
+- Add auto install of [G4C](https://gitlab.com/vblip/g4c) (git support [#4](https://github.com/kat-tax/vslite/issues/4))
 - Add context menu for various actions
-- Add git support via [isomorphic-git](https://isomorphic-git.org)
 - Add dock layout saving for projects
 - Add message system to manipulate app for integrations
-- Add integration with [Figma -> React Native](https://github.com/kat-tax/figma-to-react-native)
+- Add first integration: [Figma -> React Native](https://github.com/kat-tax/figma-to-react-native)
+- Finish `Open Folder...` action
 
 # Code Editor
 - Add status bar (line/col number, etc.)
