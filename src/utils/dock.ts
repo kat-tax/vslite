@@ -50,7 +50,7 @@ export async function openFileEditor(file: FileSystemFileHandle, fs: FileSystemA
 }
 
 // TODO
-export async function openFolder(fs: FileSystemAPI, api: DockviewApi) {
+export async function openFolder(_fs: FileSystemAPI, _api: DockviewApi) {
   // @ts-ignore
   const dir = await globalThis.showDirectoryPicker();
   for await (const entry of dir.values()) {
