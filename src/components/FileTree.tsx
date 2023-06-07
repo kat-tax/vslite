@@ -2,12 +2,14 @@ import {useRef, useEffect} from 'react';
 import {Tree, UncontrolledTreeEnvironment} from 'react-complex-tree';
 import {EventEmitter} from 'react-complex-tree/src/EventEmitter';
 import {getDirAsTree} from '../utils/webcontainer';
+// import {diff} from 'deep-object-diff';
 
 import type * as RCT from 'react-complex-tree';
 import type {FileSystemAPI} from '@webcontainer/api';
 
 interface FileTreeProps {
   fs: FileSystemAPI,
+  rev: number,
   onRenameItem: (path: string, name: string) => void,
   onTriggerItem: (path: string, name: string) => void,
 }
@@ -31,16 +33,26 @@ export function FileTree(props: FileTreeProps) {
 
   useEffect(() => {
     refresh();
-  }, []);
+    const i = setInterval(refresh, 200);
+    return () => clearInterval(i);
+  }, [props.rev]);
 
   return (
     <div style={{overflow: 'scroll'}}>
       <div className="rct-dark">
         <UncontrolledTreeEnvironment
+          canRename
+          canSearch
+          canDragAndDrop
+          canDropOnFolder
+          canSearchByStartingTyping
           dataProvider={provider.current}
           getItemTitle={item => item.data}
           onPrimaryAction={item => props.onTriggerItem(item.index.toString(), item.data)}
           onRenameItem={(item, name) => props.onRenameItem(item.index.toString(), name)}
+          onMissingItems={(itemIds) => console.log('missing', itemIds)}
+          onDrop={(item, target) => console.log('drop', item, target)}
+          onExpandItem={(item) => console.log('expand', item)}
           viewState={{}}>
           <Tree treeId="filetree" treeLabel="Explorer" rootItem="root"/>
         </UncontrolledTreeEnvironment>
@@ -63,8 +75,19 @@ class TreeProvider<T = any> implements RCT.TreeDataProvider {
   }
 
   public async updateItems(items: Record<RCT.TreeItemIndex, RCT.TreeItem<T>>) {
-    this.data.items = items;
-    this.onDidChangeTreeDataEmitter.emit(Object.keys(this.data.items));
+    // const changed: Partial<Record<RCT.TreeItemIndex, RCT.TreeItem<T>>> = diff(this.data.items, items);
+    // console.log(changed);
+
+    this.data = {items};
+    this.onChangeItemChildren('root', Object.keys(this.data.items).filter(i => i !== 'root'));
+
+    // update sub children
+    /*for (const key of Object.keys(changed)) {
+      const children = this.data.items[key]?.children;
+      if (key && children) {
+        this.onChangeItemChildren(key, children);
+      }
+    }*/
   }
 
   public async getTreeItem(itemId: RCT.TreeItemIndex): Promise<RCT.TreeItem> {

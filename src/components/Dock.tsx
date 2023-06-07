@@ -116,9 +116,10 @@ const sectionComponents: PanelCollection<IGridviewPanelProps> = {
 };
 
 const paneComponents: PanelCollection<IPaneviewPanelProps> = {
-  filetree: (props: IPaneviewPanelProps<{content: DockviewApi, fs: FileSystemAPI}>) => (
+  filetree: (props: IPaneviewPanelProps<{content: DockviewApi, fs: FileSystemAPI, rev: number}>) => (
     <FileTree
       fs={props.params.fs}
+      rev={props.params.rev}
       onRenameItem={dock.createFileRenameHandler(props.params.content, props.params.fs)}
       onTriggerItem={dock.createFileOpener(props.params.content, props.params.fs)}
     />

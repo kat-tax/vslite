@@ -12,6 +12,7 @@
   "dependencies": {
     "@monaco-editor/react": "^4.5.1",
     "@webcontainer/api": "^1.1.4",
+    "deep-object-diff": "^1.1.9",
     "dockview": "^1.7.3",
     "monaco-editor": "^0.38.0",
     "monaco-editor-auto-typings": "^0.4.4",

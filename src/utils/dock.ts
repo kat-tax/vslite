@@ -21,7 +21,7 @@ export function openFileTree(fs: FileSystemAPI, section: PaneviewApi, content: D
     id: 'filetree',
     title: 'Explorer',
     component: 'filetree',
-    params: {content, fs},
+    params: {content, fs, rev: 0},
     isExpanded: true,
   });
   filetree.headerVisible = false;
