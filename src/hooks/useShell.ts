@@ -41,7 +41,6 @@ export function useShell(): ShellInstance {
     const addon = new FitAddon();
     const {cols, rows} = terminal;
     terminal.loadAddon(addon);
-    terminal.open(root);
     shell.mount(startFiles);
     // Start shell
     const jsh = await shell.spawn('jsh', {terminal: {cols, rows}});
@@ -56,6 +55,11 @@ export function useShell(): ShellInstance {
     jsh.output.pipeTo(new WritableStream({
       write(data) {terminal.write(data)}
     }));
+    // Clear terminal and display
+    setTimeout(() => {
+      terminal.clear();
+      terminal.open(root);
+    }, 200);
     // Finish up
     setProcess(jsh);
     panel.onDidDimensionsChange(() => addon.fit());
