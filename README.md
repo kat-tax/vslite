@@ -2,11 +2,11 @@
 
 > More than Monaco, less than VSCode
 
-### Live version
+### Try it out
 
 https://vslite.dev
 
-### Getting started
+### How to run locally
 
 ```sh
 pnpm i       # Install dependencies
