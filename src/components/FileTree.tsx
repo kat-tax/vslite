@@ -3,7 +3,6 @@ import {Tree, UncontrolledTreeEnvironment} from 'react-complex-tree';
 import {EventEmitter} from 'react-complex-tree/src/EventEmitter';
 import {getDirAsTree} from '../utils/webcontainer';
 import {useDarkMode} from '../hooks/useDarkMode';
-// import {diff} from 'deep-object-diff';
 
 import type * as RCT from 'react-complex-tree';
 import type {FileSystemAPI} from '@webcontainer/api';
