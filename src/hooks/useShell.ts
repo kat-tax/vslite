@@ -36,7 +36,7 @@ export function useShell(): ShellInstance {
   const start = useCallback(async (root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => {
     if (container) return;
     console.log('Booting...');
-    const shell = await WebContainer.boot();    
+    const shell = await WebContainer.boot({workdirName: 'vslite'});    
     const terminal = new Terminal({convertEol: true, theme});
     const addon = new FitAddon();
     const {cols, rows} = terminal;
