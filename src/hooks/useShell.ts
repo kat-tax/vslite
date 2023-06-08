@@ -42,6 +42,19 @@ export function useShell(): ShellInstance {
     const {cols, rows} = terminal;
     terminal.loadAddon(addon);
     shell.mount(startFiles);
+    // Start file watcher
+    let watchReady = false;
+    const watch = await shell.spawn('npx', ['chokidar-cli', '.']);
+    watch.output.pipeTo(new WritableStream({
+      write(data) {
+        if (watchReady) {
+          console.log('Change detected: ', data);
+        } else if (data.includes('Watching "."')) {
+          console.log('File watcher ready.');
+          watchReady = true;
+        }
+      }
+    }));
     // Start shell
     const jsh = await shell.spawn('jsh', {terminal: {cols, rows}});
     // Setup git alias
