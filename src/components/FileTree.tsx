@@ -34,9 +34,9 @@ export function FileTree(props: FileTreeProps) {
 
   useEffect(() => {
     refresh();
-    const i = setInterval(refresh, 200);
-    return () => clearInterval(i);
-  }, [props.rev]);
+    //const i = setInterval(refresh, 200);
+    //return () => clearInterval(i);
+  }, []);
 
   return (
     <div style={{overflow: 'scroll'}}>

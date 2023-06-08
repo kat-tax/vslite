@@ -44,7 +44,7 @@ export function useShell(): ShellInstance {
     shell.mount(startFiles);
     // Start file watcher
     let watchReady = false;
-    const watch = await shell.spawn('npx', ['chokidar-cli', '.']);
+    const watch = await shell.spawn('pnpm', ['dlx', 'chokidar-cli', '.', '-i', '"(**/(node_modules|.git|_tmp_)**)"']);
     watch.output.pipeTo(new WritableStream({
       write(data) {
         if (watchReady) {
@@ -61,22 +61,27 @@ export function useShell(): ShellInstance {
     const init = jsh.output.getReader();
     const input = jsh.input.getWriter();
     await init.read();
-    await input.write(`alias git='npx g4c'\n\f`);
+    await input.write(`alias ni='pnpm dlx @antfu/ni'\n\f`);
+    await input.write(`alias git='pnpm dlx g4c@stable'\n\f`);
     init.releaseLock();
     // Pipe terminal to shell and vice versa
     terminal.onData(data => {input.write(data)});
-    jsh.output.pipeTo(new WritableStream({
-      write(data) {terminal.write(data)}
-    }));
-    // Clear terminal and display
-    setTimeout(() => {
+    jsh.output.pipeTo(new WritableStream({write(data) {terminal.write(data)}}));
+    setTimeout(async () => {
+      // Auto clone repo if in url
+      if (location.pathname.startsWith('/~/')) {
+        const repo = location.pathname.replace('/~/', 'https://');
+        const folder = location.pathname.match(/\/([^/]+)\.git/)?.[1];
+        await input.write(`git clone ${repo} && cd ${folder} && ni\n`);
+      }
+      // Clear terminal and display
       terminal.clear();
       terminal.open(root);
+      addon.fit();
     }, 200);
     // Finish up
     setProcess(jsh);
     panel.onDidDimensionsChange(() => addon.fit());
-    addon.fit();
     shell.on('server-ready', (port, url) => onServerReady && onServerReady(url, port));
     setContainer(shell);
     setTerminal(terminal);
