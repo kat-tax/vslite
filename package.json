@@ -29,5 +29,6 @@
     "typescript": "^5.1.3",
     "vite": "^4.3.9",
     "vite-plugin-node-polyfills": "^0.8.2"
-  }
+  },
+  "prettier": { "src": "@github/prettier-config" }
 }
