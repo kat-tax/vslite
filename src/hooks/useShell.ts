@@ -33,29 +33,37 @@ export function useShell(): ShellInstance {
     }
   }, [isDark]);
 
-  const start = useCallback((root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => {
+  const start = useCallback(async (root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => {
     if (container) return;
     console.log('Booting...');
-    WebContainer.boot().then(shell => {
-      const addon = new FitAddon();
-      const terminal = new Terminal({convertEol: true, theme});
-      const {cols, rows} = terminal;
-      terminal.loadAddon(addon);
-      terminal.open(root);
-      shell.mount(startFiles);
-      shell.spawn('jsh', {terminal: {cols, rows}}).then(shell => {
-        const input = shell.input.getWriter();
-        terminal.onData(data => {input.write(data)});
-        shell.output.pipeTo(new WritableStream({write(data) {terminal.write(data)}}));
-        setProcess(shell);
-      });
-      panel.onDidDimensionsChange(() => addon.fit());
-      addon.fit();
-      shell.on('server-ready', (port, url) => onServerReady && onServerReady(url, port));
-      setContainer(shell);
-      setTerminal(terminal);
-      console.log('Done.');
-    });
+    const shell = await WebContainer.boot();    
+    const terminal = new Terminal({convertEol: true, theme});
+    const addon = new FitAddon();
+    const {cols, rows} = terminal;
+    terminal.loadAddon(addon);
+    terminal.open(root);
+    shell.mount(startFiles);
+    // Start shell
+    const jsh = await shell.spawn('jsh', {terminal: {cols, rows}});
+    // Setup git alias
+    const init = jsh.output.getReader();
+    const input = jsh.input.getWriter();
+    await init.read();
+    await input.write(`alias git='npx g4c'\n\f`);
+    init.releaseLock();
+    // Pipe terminal to shell and vice versa
+    terminal.onData(data => {input.write(data)});
+    jsh.output.pipeTo(new WritableStream({
+      write(data) {terminal.write(data)}
+    }));
+    // Finish up
+    setProcess(jsh);
+    panel.onDidDimensionsChange(() => addon.fit());
+    addon.fit();
+    shell.on('server-ready', (port, url) => onServerReady && onServerReady(url, port));
+    setContainer(shell);
+    setTerminal(terminal);
+    console.log('Done.');
   }, []);
 
   return {terminal, container, process, start};
