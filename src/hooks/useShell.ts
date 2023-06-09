@@ -44,7 +44,7 @@ export function useShell(): ShellInstance {
     shell.mount(startFiles);
     // Start file watcher
     let watchReady = false;
-    const watch = await shell.spawn('pnpm', ['dlx', 'chokidar-cli', '.', '-i', '"(**/(node_modules|.git|_tmp_)**)"']);
+    const watch = await shell.spawn('npx', ['-y', 'chokidar-cli', '.', '-i', '"(**/(node_modules|.git|_tmp_)**)"']);
     watch.output.pipeTo(new WritableStream({
       write(data) {
         if (watchReady) {
@@ -61,8 +61,8 @@ export function useShell(): ShellInstance {
     const init = jsh.output.getReader();
     const input = jsh.input.getWriter();
     await init.read();
-    await input.write(`alias ni='pnpm dlx @antfu/ni'\n\f`);
-    await input.write(`alias git='pnpm dlx g4c@stable'\n\f`);
+    await input.write(`alias ni='npx -y @antfu/ni'\n\f`);
+    await input.write(`alias git='npx -y g4c@stable'\n\f`);
     init.releaseLock();
     // Pipe terminal to shell and vice versa
     terminal.onData(data => {input.write(data)});
