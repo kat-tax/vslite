@@ -61,7 +61,6 @@ export function useShell(): ShellInstance {
     const init = jsh.output.getReader();
     const input = jsh.input.getWriter();
     await init.read();
-    await input.write(`alias ni='npx -y @antfu/ni'\n\f`);
     await input.write(`alias git='npx -y g4c@stable'\n\f`);
     init.releaseLock();
     // Pipe terminal to shell and vice versa
@@ -71,7 +70,7 @@ export function useShell(): ShellInstance {
       // Auto clone repo if in url
       if (location.pathname.startsWith('/~/')) {
         const repo = location.pathname.replace('/~/', 'https://');
-        await input.write(`git clone ${repo} './' && ni\n`);
+        await input.write(`git clone ${repo} './' && npx -y @antfu/ni\n`);
       }
       // Clear terminal and display
       terminal.clear();
