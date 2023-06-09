@@ -71,8 +71,7 @@ export function useShell(): ShellInstance {
       // Auto clone repo if in url
       if (location.pathname.startsWith('/~/')) {
         const repo = location.pathname.replace('/~/', 'https://');
-        const folder = location.pathname.match(/\/([^/]+)\.git/)?.[1];
-        await input.write(`git clone ${repo} && cd ${folder} && ni\n`);
+        await input.write(`git clone ${repo} './' && ni\n`);
       }
       // Clear terminal and display
       terminal.clear();
