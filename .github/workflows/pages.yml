@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: true
   
 env:
-  VITE_PAGE_URL: ${{ steps.deployment.outputs.page_url }}
+  VITE_BASE: ${{github.event.repository.name}}/
 
 jobs:
   # Single deploy job since we're just deploying
