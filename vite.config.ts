@@ -9,7 +9,7 @@ const isWebContainer = globalThis.process?.versions?.webcontainer;
 console.log(globalThis.process.env)
 
 export default defineConfig({
-  base: '',
+  base: '/',
   plugins: [
     pluginRewriteAll(),
     nodePolyfills(),
