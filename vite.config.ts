@@ -1,11 +1,14 @@
 import {defineConfig} from 'vite';
 import {nodePolyfills} from 'vite-plugin-node-polyfills';
 import pluginRewriteAll from 'vite-plugin-rewrite-all';
-import react from '@vitejs/plugin-react-swc';
+import react from "@vitejs/plugin-react";
+import reactSWC from "@vitejs/plugin-react-swc";
+
+const isWC =  (globalThis as any).process?.versions?.webcontainer
 
 export default defineConfig({
   plugins: [
-    react(),
+    (isWC ? react.default : reactSWC)(),
     nodePolyfills(),
     pluginRewriteAll(),
   ],
