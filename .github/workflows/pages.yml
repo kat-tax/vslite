@@ -46,8 +46,8 @@ jobs:
         run: npm i -g @antfu/ni && ni
       - name: Build
         run: npx vite build
-      - name: Copy Vslite to subfolder for Pages
-        run: cp -r dist dist/vslite
+      - name: Pages subfolder fix
+        run: cp -r dist /tmp/vslite && mv /tmp/vslite dist/vslite
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
