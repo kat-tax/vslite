@@ -7,7 +7,7 @@ import react from '@vitejs/plugin-react';
 const isWebContainer = globalThis.process?.versions?.webcontainer;
 
 export default defineConfig({
-  base: globalThis.process.env.CI ? `vslite/` : ''
+  base: globalThis.process.env.CI ? `vslite/` : '',
   plugins: [
     pluginRewriteAll(),
     nodePolyfills(),
