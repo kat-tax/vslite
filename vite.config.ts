@@ -6,7 +6,7 @@ import react from '@vitejs/plugin-react';
 
 const isWebContainer = globalThis.process?.versions?.webcontainer;
 
-console.log(globalThis.process.VITE_PAGE_URL)
+console.log(globalThis.process.env)
 
 export default defineConfig({
   base: '',
