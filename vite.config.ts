@@ -1,16 +1,18 @@
 import {defineConfig} from 'vite';
 import {nodePolyfills} from 'vite-plugin-node-polyfills';
 import pluginRewriteAll from 'vite-plugin-rewrite-all';
-import react from "@vitejs/plugin-react";
-import reactSWC from "@vitejs/plugin-react-swc";
+import reactSWC from '@vitejs/plugin-react-swc';
+import react from '@vitejs/plugin-react';
 
-const isWC =  (globalThis as any).process?.versions?.webcontainer
+const isWebContainer = globalThis.process?.versions?.webcontainer;
 
 export default defineConfig({
   plugins: [
-    (isWC ? react.default : reactSWC)(),
-    nodePolyfills(),
     pluginRewriteAll(),
+    nodePolyfills(),
+    isWebContainer
+      ? react()
+      : reactSWC(),
   ],
   build: {
     chunkSizeWarningLimit: 750,
