@@ -47,7 +47,7 @@ jobs:
       - name: Build
         run: npx vite build
       - name: Copy Vslite to subfolder for Pages
-        run: cp dist dist/vslite
+        run: cp -r dist dist/vslite
       - name: Setup Pages
         uses: actions/configure-pages@v3
       - name: Upload artifact
