@@ -1019,7 +1019,7 @@ packages:
   /dockview@1.7.3:
     resolution: {integrity: sha512-GGtaC0pTRX3nTa5XGUEIXInZf71COYsld25ricAptxlAMiuMH+zbVrZJQnvx2KeItahhEejPQ1sThd4u7jzzqQ==}
     dependencies:
-      dockview-core: '@pkg.csb.dev/mathuo/dockview/commit/bc5f8208/dockview-core'
+      dockview-core: '@pkg.csb.dev/mathuo/dockview/commit/2156a1dd/dockview-core'
     dev: false
 
   /domain-browser@4.22.0:
@@ -1830,7 +1830,7 @@ packages:
     dev: true
 
   '@pkg.csb.dev/mathuo/dockview/commit/bc5f8208/dockview-core':
-    resolution: {tarball: https://pkg.csb.dev/mathuo/dockview/commit/bc5f8208/dockview-core}
+    resolution: {tarball: https://pkg.csb.dev/mathuo/dockview/commit/2156a1dd/dockview-core}
     name: dockview-core
     version: 1.7.3
     dev: false
