@@ -3,9 +3,12 @@ import {Tree, UncontrolledTreeEnvironment} from 'react-complex-tree';
 import {EventEmitter} from 'react-complex-tree/src/EventEmitter';
 import {getDirAsTree} from '../utils/webcontainer';
 import {useDarkMode} from '../hooks/useDarkMode';
+import Debug from '../utils/debug';
 
 import type * as RCT from 'react-complex-tree';
 import type {FileSystemAPI} from '@webcontainer/api';
+
+const debug = Debug('FileTree')
 
 interface FileTreeProps {
   fs: FileSystemAPI,
@@ -29,6 +32,7 @@ export function FileTree(props: FileTreeProps) {
 
   const refresh = async () => {
     const data = await getDirAsTree(props.fs, '.', 'root', root, {});
+    debug('refresh data', data)
     provider.current.updateItems(data);
   };
 
