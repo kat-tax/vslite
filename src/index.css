@@ -20,12 +20,11 @@
   }
 }
 
-html { overscroll-behavior: none; } /* disable pull to refresh */
-
 body, html, #root {
   width: 100%;
   height: 100%;
   margin: 0;
+  overscroll-behavior: none; /* no pull to refresh. Safari needs html, Chrome body. */
 }
 
 iframe {
