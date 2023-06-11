@@ -4,6 +4,7 @@ import {Terminal} from 'xterm';
 import {FitAddon} from 'xterm-addon-fit';
 import {startFiles} from '../utils/webcontainer';
 import {useDarkMode} from '../hooks/useDarkMode';
+import {FileTreeState} from '../components/FileTree'
 
 import type {WebContainerProcess} from '@webcontainer/api';
 import type {GridviewPanelApi} from 'dockview';
@@ -49,6 +50,8 @@ export function useShell(): ShellInstance {
       write(data) {
         if (watchReady) {
           console.log('Change detected: ', data);
+          console.log('FileTree', FileTreeState)
+          FileTreeState.refresh()
         } else if (data.includes('Watching "."')) {
           console.log('File watcher ready.');
           watchReady = true;

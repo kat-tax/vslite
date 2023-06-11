@@ -26,6 +26,10 @@ const root: RCT.TreeItem<string> = {
   children: [],
 };
 
+export const FileTreeState = {
+  refresh: new Function()
+}
+
 export function FileTree(props: FileTreeProps) {
   const isDark = useDarkMode();
   const provider = useRef<TreeProvider<string>>(new TreeProvider({root}));
@@ -35,6 +39,7 @@ export function FileTree(props: FileTreeProps) {
     debug('refresh data', data)
     provider.current.updateItems(data);
   };
+  FileTreeState.refresh = refresh
 
   useEffect(() => {
     refresh();
