@@ -109,11 +109,7 @@ const contentComponents: PanelCollection<IDockviewPanelProps> = {
   ),
   preview: (props: IDockviewPanelProps<{url: string}>) => (
     // @ts-ignore
-    <iframe
-      src={props.params.url}
-      allow="cross-origin-isolated"
-      credentialless
-    />
+    <iframe src={props.params.url} allow="cross-origin-isolated" credentialless/>
   ),
 };
 
