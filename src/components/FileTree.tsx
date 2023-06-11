@@ -4,6 +4,7 @@ import {EventEmitter} from 'react-complex-tree/src/EventEmitter';
 import {getDirAsTree} from '../utils/webcontainer';
 import {useDarkMode} from '../hooks/useDarkMode';
 import Debug from '../utils/debug';
+import { debounce } from '../utils/debounce';
 
 import type * as RCT from 'react-complex-tree';
 import type {FileSystemAPI} from '@webcontainer/api';
@@ -39,7 +40,7 @@ export function FileTree(props: FileTreeProps) {
     debug('refresh data', data)
     provider.current.updateItems(data);
   };
-  FileTreeState.refresh = refresh
+  FileTreeState.refresh = debounce(refresh)
 
   useEffect(() => {
     refresh();
