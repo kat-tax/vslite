@@ -5,11 +5,11 @@ import reactSWC from '@vitejs/plugin-react-swc';
 import react from '@vitejs/plugin-react';
 
 export default defineConfig({
-  base: process?.env.VITE_BASE || '/',
+  base: globalThis.process?.env.VITE_BASE || '/',
   plugins: [
     pluginRewriteAll(),
     nodePolyfills(),
-    process?.versions?.webcontainer
+    globalThis.process?.versions?.webcontainer
       ? react()
       : reactSWC(),
   ],
