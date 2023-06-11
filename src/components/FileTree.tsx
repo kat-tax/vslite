@@ -36,8 +36,16 @@ export function FileTree(props: FileTreeProps) {
   const provider = useRef<TreeProvider<string>>(new TreeProvider({root}));
 
   const refresh = async () => {
-    const data = await getDirAsTree(props.fs, '.', 'root', root, {});
+    const data = await getDirAsTree(props.fs, '/vslite', 'root', root, {});
     debug('refresh data', data)
+    // const newData: Record<RCT.TreeItemIndex, RCT.TreeItem<string>> = {}
+    // for (const [index, item] of Object.entries(data)) {
+    //   if (index.includes('/.')) {
+    //     console.log('bad item', item)
+    //   } else {
+    //     newData[index] = item
+    //   }
+    // }
     provider.current.updateItems(data);
   };
   FileTreeState.refresh = debounce(refresh)

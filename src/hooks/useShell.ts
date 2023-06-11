@@ -50,7 +50,6 @@ export function useShell(): ShellInstance {
       write(data) {
         if (watchReady) {
           console.log('Change detected: ', data);
-          console.log('FileTree', FileTreeState)
           FileTreeState.refresh()
         } else if (data.includes('Watching "."')) {
           console.log('File watcher ready.');
@@ -65,6 +64,7 @@ export function useShell(): ShellInstance {
     const input = jsh.input.getWriter();
     await init.read();
     await input.write(`alias git='npx -y g4c@stable'\n\f`);
+    await input.write(`alias vslite-clone='git clone github.com/kat-tax/vslite'\n\f`)
     init.releaseLock();
     // Pipe terminal to shell and vice versa
     terminal.onData(data => {input.write(data)});
