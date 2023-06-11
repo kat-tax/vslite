@@ -1,5 +1,8 @@
 lockfileVersion: '6.0'
 
+overrides:
+  dockview-core: https://pkg.csb.dev/mathuo/dockview/commit/bc5f8208/dockview-core
+
 dependencies:
   '@monaco-editor/react':
     specifier: ^4.5.1
@@ -1013,14 +1016,10 @@ packages:
       randombytes: 2.1.0
     dev: true
 
-  /dockview-core@1.7.3:
-    resolution: {integrity: sha512-qZPxBv1kCtLiMejmC7ox7Tv0jRFfFSSgM9P4/htblprEK4x57PLKmK5eDjDwCD7JyPB6rZ9rxPOEQ97OGhdrnQ==}
-    dev: false
-
   /dockview@1.7.3:
     resolution: {integrity: sha512-GGtaC0pTRX3nTa5XGUEIXInZf71COYsld25ricAptxlAMiuMH+zbVrZJQnvx2KeItahhEejPQ1sThd4u7jzzqQ==}
     dependencies:
-      dockview-core: 1.7.3
+      dockview-core: '@pkg.csb.dev/mathuo/dockview/commit/bc5f8208/dockview-core'
     dev: false
 
   /domain-browser@4.22.0:
@@ -1829,3 +1828,9 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
+
+  '@pkg.csb.dev/mathuo/dockview/commit/bc5f8208/dockview-core':
+    resolution: {tarball: https://pkg.csb.dev/mathuo/dockview/commit/bc5f8208/dockview-core}
+    name: dockview-core
+    version: 1.7.3
+    dev: false
