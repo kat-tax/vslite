@@ -3,7 +3,7 @@ export const NS = 'vslite'
 const CONFIG = globalThis.localStorage?.debug ?
   globalThis.localStorage?.debug :
   globalThis.process?.env.DEBUG || ''
-const isEnabled = CONFIG.split(',').findOne((m: string) => m.startsWith(NS))
+const isEnabled = CONFIG.split(',').find((m: string) => m.startsWith(NS) || m === '*')
 
 const Debug = (name: string) => {
   const prefix = `[${NS}/${name}]`
