@@ -20,6 +20,8 @@
   }
 }
 
+html { overscroll-behavior: none; } /* disable pull to refresh */
+
 body, html, #root {
   width: 100%;
   height: 100%;
