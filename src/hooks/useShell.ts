@@ -47,10 +47,10 @@ export function useShell(): ShellInstance {
     let watchReady = false;
     const watch = await shell.spawn('npx', ['-y', 'chokidar-cli', '.', '-i', '"(**/(node_modules|.git|_tmp_)**)"']);
     watch.output.pipeTo(new WritableStream({
-      write(data) {
+      async write(data) {
         if (watchReady) {
           console.log('Change detected: ', data);
-          FileTreeState.refresh()
+          FileTreeState.refresh(data)
         } else if (data.includes('Watching "."')) {
           console.log('File watcher ready.');
           watchReady = true;

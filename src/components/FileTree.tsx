@@ -35,9 +35,9 @@ export function FileTree(props: FileTreeProps) {
   const isDark = useDarkMode();
   const provider = useRef<TreeProvider<string>>(new TreeProvider({root}));
 
-  const refresh = async () => {
-    const data = await getDirAsTree(props.fs, '', 'root', root, {});
-    debug('refresh data', data)
+  const refresh = async (updateMessage?: string) => {
+    const data = await getDirAsTree(props.fs, '.', 'root', root, {});
+    debug('refresh data', data, updateMessage)
     // const newData: Record<RCT.TreeItemIndex, RCT.TreeItem<string>> = {}
     // for (const item of Object.values(data)) {
     //   if (item.index.includes('/.')) {
@@ -46,12 +46,12 @@ export function FileTree(props: FileTreeProps) {
     //     newData[item.index] = item
     //   }
     // }
-    provider.current.updateItems(data);
+    try { provider.current.updateItems(data) } catch {}
   };
-  FileTreeState.refresh = debounce(refresh)
+  FileTreeState.refresh = debounce(refresh, 2000)
 
   useEffect(() => {
-    refresh();
+    // refresh();
     //const i = setInterval(refresh, 200);
     //return () => clearInterval(i);
   }, []);
@@ -71,7 +71,7 @@ export function FileTree(props: FileTreeProps) {
           onRenameItem={(item, name) => props.onRenameItem(item.index.toString(), name)}
           onMissingItems={(itemIds) => console.log('missing', itemIds)}
           onDrop={(item, target) => console.log('drop', item, target)}
-          onExpandItem={(item) => console.log('expand', item)}
+          onExpandItem={(item) => { console.log('expand', item); FileTreeState.refresh() }}
           viewState={{}}>
           <Tree treeId="filetree" treeLabel="Explorer" rootItem="root"/>
         </UncontrolledTreeEnvironment>
