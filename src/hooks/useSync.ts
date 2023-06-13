@@ -1,7 +1,8 @@
 import {useRef, useCallback, useEffect} from 'react';
 
-import type {ShellInstance} from '../hooks/useShell';
 import type {Editor} from '../utils/monaco';
+import type {ShellInstance} from '../hooks/useShell';
+import type {FileSystemAPI} from '@webcontainer/api';
 import type * as Sync from '../utils/sync';
 
 export type SyncInstance = {
@@ -10,48 +11,50 @@ export type SyncInstance = {
   syncEditor: (editor: Editor) => void,
 };
 
-export function useSync(_shell: ShellInstance): SyncInstance {
+export function useSync(shell: ShellInstance): SyncInstance {
   const key = useRef<string>('');
+  const init = useRef(false);
   const session = useRef<Sync.Session | null>(null);
   const syncMonaco = useRef<typeof Sync.monaco | null>(null);
-  
-  const init = useCallback(() => {
-    const _key = location.href.match(/(?:\/\+\/|#\/)(.+)/)?.pop();
-    const _hasFigma = _key?.startsWith('figma/');
-    console.log('Setting up sync.', _key, 'Figma:', _hasFigma);
-    if (!_key) return;
-    // Figma integration sync
-    if (_key.startsWith('figma/')) {
-      key.current = _key?.split('/').pop() || _key;
-    // Editor collab sync
-    } else {
-      key.current = _key;
-    }
-    // Import sync module & connect
-    import('../utils/sync').then(sync => {
-      session.current = sync.connect(key.current);
-      syncMonaco.current = sync.monaco;
-      console.log('Connected to sync.');
-      if (_hasFigma) syncFigma();
-    });
-  }, []);
 
   const syncEditor = useCallback((editor: Editor) => {
-    console.log(editor, session.current, syncMonaco.current);
-    if (!session.current) return;
-    if (!syncMonaco.current) return;
+    if (!session.current || !syncMonaco.current) return;
     console.log('Editor sync enabled.');
     syncMonaco.current(editor, session.current.document, session.current.provider);
   }, []);
 
-  const syncFigma = useCallback(() => {
-    if (!session.current) return;
+  const syncFigma = useCallback((fs: FileSystemAPI | undefined) => {
+    if (!session.current || !fs) return;
     console.log('Figma sync enabled.');
-    const files = session.current.document.getMap<string>('files');
-    files.observe(e => console.log(e.changes));
+    const $files = session.current.document.getMap<string>('files');
+    $files.observe(e => {
+      e.keys.forEach((_change, key) => {
+        const $file = $files.get(key);
+        if (!$file) return;
+        fs.writeFile(key, $file, 'utf-8');
+      });
+    });
   }, []);
 
-  useEffect(init, []);
+  useEffect(() => {
+    if (init.current) return;
+    if (shell && shell.container?.fs) {
+      init.current = true;
+      const _key = location.href.match(/(?:\/\+\/|#\/)(.+)/)?.pop();
+      if (!_key) return;
+      key.current = _key.replace('figma/', '');
+      console.log('Setting up sync.', 'Key:', key.current);
+      // Import sync module & connect
+      import('../utils/sync').then(sync => {
+        session.current = sync.connect(key.current);
+        syncMonaco.current = sync.monaco;
+        console.log('Connected to sync.');
+        if (_key?.startsWith('figma/')) {
+          syncFigma(shell.container?.fs);
+        }
+      });
+    }
+  }, [shell]);
 
   return {key, session, syncEditor};
 }

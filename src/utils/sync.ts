@@ -17,10 +17,11 @@ export function connect(key: string): Session {
 }
 
 export function monaco(editor: Editor, document: Y.Doc, provider: WebsocketProvider) {
-  const type = document.getText('monaco');
+  const path = editor.getModel()?.uri.path;
   const model = editor.getModel();
+  const $type = document.getText(path);
   if (model) {
-    return new MonacoBinding(type, model, new Set([editor]), provider.awareness);
+    return new MonacoBinding($type, model, new Set([editor]), provider.awareness);
   } else {
     throw new Error('Model not found');
   }
