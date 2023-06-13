@@ -2,13 +2,14 @@ import {AutoTypings, LocalStorageCache} from 'monaco-editor-auto-typings/custom-
 
 import type * as monaco from 'monaco-editor';
 import type {FileSystemAPI} from '@webcontainer/api';
+import type {SyncInstance} from '../hooks/useSync';
 
-type Editor = monaco.editor.IStandaloneCodeEditor;
-type Monaco = typeof monaco;
+export type Editor = monaco.editor.IStandaloneCodeEditor;
+export type Monaco = typeof monaco;
 
 const sourceCache = new LocalStorageCache();
 
-export async function initEditor(editor: Editor, monaco: Monaco, fs: FileSystemAPI, path: string) {
+export async function initEditor(editor: Editor, monaco: Monaco, fs: FileSystemAPI, path: string, sync: SyncInstance) {
   // Augment
   AutoTypings.create(editor, {monaco, sourceCache, fileRootPath: './'});
   // Load file
@@ -16,6 +17,8 @@ export async function initEditor(editor: Editor, monaco: Monaco, fs: FileSystemA
   try { contents = await fs.readFile(path, 'utf-8')} catch (e) {}
   editor.setValue(contents);
   editor.updateOptions({readOnly: false});
+  // Setup sync (if applicable)
+  sync.syncEditor(editor);
 }
 
 export function getLanguageFromFileName(name: string) {

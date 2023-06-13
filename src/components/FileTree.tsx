@@ -9,7 +9,6 @@ import type {FileSystemAPI} from '@webcontainer/api';
 
 interface FileTreeProps {
   fs: FileSystemAPI,
-  rev: number,
   onRenameItem: (path: string, name: string) => void,
   onTriggerItem: (path: string, name: string) => void,
 }
