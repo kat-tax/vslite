@@ -16,9 +16,15 @@ export async function initEditor(editor: Editor, monaco: Monaco, fs: FileSystemA
   let contents = '';
   try { contents = await fs.readFile(path, 'utf-8')} catch (e) {}
   editor.setValue(contents);
-  editor.updateOptions({readOnly: false});
-  // Setup sync (if applicable)
-  sync.syncEditor(editor);
+  // Editor syncing
+  if (sync) {
+    if (sync.key.current.startsWith('figma/')) {
+      editor.updateOptions({readOnly: true});
+    } else {
+      editor.updateOptions({readOnly: false});
+      sync.syncEditor(editor); // TODO: make this work w/ Figma, currently it clears file
+    }
+  }
 }
 
 export function getLanguageFromFileName(name: string) {

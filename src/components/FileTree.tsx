@@ -33,8 +33,8 @@ export function FileTree(props: FileTreeProps) {
 
   useEffect(() => {
     refresh();
-    //const i = setInterval(refresh, 200);
-    //return () => clearInterval(i);
+    const i = setInterval(refresh, 1000);
+    return () => clearInterval(i);
   }, []);
 
   return (

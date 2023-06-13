@@ -56,9 +56,9 @@ export function Dock() {
     if (!fs || !api || !monaco) return;
     // Open files
     if (launch.files.length > 0) {
-      launch.files.forEach(file => {
-        dock.openFileEditor(file, fs, api, sync);
-      });
+      launch.files.forEach(file =>
+        dock.openStartFile(file, fs, api, sync));
+        // TODO: ask for containing folder access
     // Execute action
     } else if (launch.action) {
       switch (launch.action) {
@@ -69,9 +69,8 @@ export function Dock() {
         }
       }
     // Open blank file (if no URL)
-    } else {
-    //} else if (location.pathname === '/') {
-      dock.openUntitledEditor(fs, api, sync);
+    } else if (location.pathname === '/') {
+      dock.openUntitledFile(fs, api, sync);
     }
     initLaunch.current = true;
   }, [monaco, launch, shell]);

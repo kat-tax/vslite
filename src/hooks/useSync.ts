@@ -28,7 +28,8 @@ export function useSync(shell: ShellInstance): SyncInstance {
     console.log('Figma sync enabled.');
     const $files = session.current.document.getMap<string>('files');
     $files.observe(e => {
-      e.keys.forEach((_change, key) => {
+      e.keys.forEach((change, key) => {
+        console.log('Figma sync: ', change.action, key);
         const $file = $files.get(key);
         if (!$file) return;
         fs.writeFile(key, $file, 'utf-8');
@@ -42,7 +43,7 @@ export function useSync(shell: ShellInstance): SyncInstance {
       init.current = true;
       const _key = location.href.match(/(?:\/\+\/|#\/)(.+)/)?.pop();
       if (!_key) return;
-      key.current = _key.replace('figma/', '');
+      key.current = _key;
       console.log('Setting up sync.', 'Key:', key.current);
       // Import sync module & connect
       import('../utils/sync').then(sync => {
