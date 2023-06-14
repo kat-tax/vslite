@@ -1,0 +1,87 @@
+hidden=[".config"]
+
+# onBoot=['echo', '$PATH'] # ⚠ node is not in env, yet
+# onBoot=['echo', 'rebooted..'] # Runs on reboot, very limited ENV vars
+# compile="npm i" # No runtime ENV vars
+# run = ["npm", "run", "dev"] # Use TOML's """ for a multiline bash script
+run = """
+echo NodeJS Version: $(node --version) "\n"
+pnpm run dev
+bash --norc
+""" # "
+
+entrypoint = ".replit"
+
+[nix]
+channel = "stable-22_11"
+
+[env]
+PATH = "/home/runner/$REPL_SLUG/.config/npm/node_global/bin:/home/runner/$REPL_SLUG/node_modules/.bin:./node_modules/.bin"
+npm_config_prefix = "/home/runner/$REPL_SLUG/.config/npm/node_global" # Global install support
+npm_config_yes="true" # This is a safe space, don't ask stupid questions
+NODE_OPTIONS="--max_old_space_size=384"
+# EDITOR="replit-git-editor" # Not reliable, use curl replspace instead
+#NODE_NO_WARNINGS="1"
+
+# Helper for Replit's git importer
+[gitHubImport]
+requiredFiles = ["package.json", "tsconfig.json", "pnpm-lock.yaml"]
+
+# Disables UPM, which BREAKS with PNPM, NPM v9, PNPM/Turbo/Yarn/Deno/Bun etc
+[packager]
+language = "no" # nodejs-npm / nodejs-yarn
+ignoredPaths = ["."] # disables guessImports
+
+[languages.typescript]
+pattern = "**/{*.ts,*.js,*.tsx,*.jsx}"
+syntax = "typescript"
+ 
+  [languages.typescript.languageServer]
+  start = [ "typescript-language-server", "--stdio" ]
+
+# CWD is not supported
+#   As a workaround, use Node 19 with --import and a helper script that CD's to a directory based on env vars
+[debugger]
+support = true
+
+  [debugger.interactive]
+  transport = "localhost:0"
+  startCommand = [ "dap-node" ]
+
+  [debugger.interactive.initializeMessage]
+  command = "initialize"
+  type = "request"
+
+  [debugger.interactive.initializeMessage.arguments]
+  clientID = "replit"
+  clientName = "replit.com"
+  columnsStartAt1 = true
+  linesStartAt1 = true
+  locale = "en-us"
+  pathFormat = "path"
+  supportsInvalidatedEvent = true
+  supportsProgressReporting = true
+  supportsRunInTerminalRequest = true
+  supportsVariablePaging = true
+  supportsVariableType = true
+
+  [debugger.interactive.launchMessage]
+  command = "launch"
+  type = "request"
+  
+  [debugger.interactive.launchMessage.arguments]
+  runtimeArgs = ["--loader", "ts-node/esm/transpile-only"]
+  args = []
+  console = "externalTerminal"
+  cwd = "." # Broken
+  environment = [] # Broken
+  pauseForSourceMap = false
+  program = "index.ts"
+  request = "launch"
+  sourceMaps = true
+  stopOnEntry = false
+  type = "pwa-node"
+
+  [debugger.interactive.launchMessage.arguments.env]
+  IS_RAY_AWESOME = "yes"
+
