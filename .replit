@@ -1,4 +1,4 @@
-hidden=[".config"]
+hidden=[".config", ".gitignore", ".github", "node_modules", "pnpm-lock.yaml", "tsconfig.json", "tsconfig.node.json", "vite.config.ts"]
 
 # onBoot=['echo', '$PATH'] # ⚠ node is not in env, yet
 # onBoot=['echo', 'rebooted..'] # Runs on reboot, very limited ENV vars
@@ -10,16 +10,21 @@ pnpm run dev
 bash --norc
 """ # "
 
+compile = """
+pnpm i
+"""
+
 entrypoint = ".replit"
 
 [nix]
 channel = "stable-22_11"
 
 [env]
-PATH = "/home/runner/$REPL_SLUG/.config/npm/node_global/bin:/home/runner/$REPL_SLUG/node_modules/.bin:./node_modules/.bin"
+PATH = "/home/runner/$REPL_SLUG/.config/npm/node_global/bin:/home/runner/$REPL_SLUG/node_modules/.bin:./node_modules/.bin:/home/runner/$REPL_SLUG/.config/pnpm"
 npm_config_prefix = "/home/runner/$REPL_SLUG/.config/npm/node_global" # Global install support
 npm_config_yes="true" # This is a safe space, don't ask stupid questions
 NODE_OPTIONS="--max_old_space_size=384"
+PNPM_HOME = "/home/runner/$REPL_SLUG/.config/pnpm"
 # EDITOR="replit-git-editor" # Not reliable, use curl replspace instead
 #NODE_NO_WARNINGS="1"
 
