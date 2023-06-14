@@ -16,6 +16,10 @@ pnpm i
 
 entrypoint = ".replit"
 
+[[ports]]
+localPort = 5101
+remotePort = 80
+
 [nix]
 channel = "stable-22_11"
 
