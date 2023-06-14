@@ -67,7 +67,7 @@ export function useShell(): ShellInstance {
     terminal.onData(data => {input.write(data)});
     jsh.output.pipeTo(new WritableStream({write(data) {terminal.write(data)}}));
     setTimeout(async () => {
-      // Auto clone repo if in url
+      // Git repo (clone repo and install)
       if (location.pathname.startsWith('/~/')) {
         const repo = location.pathname.replace('/~/', 'https://');
         await input.write(`git clone ${repo} './' && npx -y @antfu/ni\n`);
