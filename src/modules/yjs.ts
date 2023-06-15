@@ -1,22 +1,21 @@
-// @ts-ignore
-import {WebsocketProvider} from 'y-websocket';
+import {WebrtcProvider} from 'y-webrtc';
 import {MonacoBinding} from 'y-monaco';
 import * as Y from 'yjs';
 
-import {Editor} from './monaco';
+import type {Editor} from './monaco';
 
 export type Session = {
   document: Y.Doc,
-  provider: WebsocketProvider,
+  provider: WebrtcProvider,
 };
 
 export function connect(key: string): Session {
   const document = new Y.Doc();
-  const provider = new WebsocketProvider('ws://localhost:1234', key, document);
+  const provider = new WebrtcProvider(key, document);
   return {document, provider};
 }
 
-export function monaco(editor: Editor, document: Y.Doc, provider: WebsocketProvider) {
+export function monaco(editor: Editor, document: Y.Doc, provider: WebrtcProvider) {
   const path = editor.getModel()?.uri.path;
   const model = editor.getModel();
   const $type = document.getText(path);

@@ -1,34 +1,56 @@
 import type {DockviewApi, GridviewApi, PaneviewApi} from 'dockview';
 import type {FileSystemAPI} from '@webcontainer/api';
 import type {ShellInstance} from '../hooks/useShell';
-import type {SyncInstance} from '../hooks/useSync';
+import type {CollabInstance} from '../hooks/useCollab';
 
-export function openTerminal(shell: ShellInstance, section: GridviewApi, content: DockviewApi) {
-  section.addPanel({
-    id: 'terminal',
-    component: 'terminal',
-    params: {content, shell},
-    minimumHeight: 100,
+export function openDock(grid: GridviewApi, api: React.MutableRefObject<DockviewApi | undefined>) {
+  grid.addPanel({
+    id: 'dock',
+    component: 'dock',
+    params: {api},
+  });
+}
+
+export function openPanes(grid: GridviewApi, api: React.MutableRefObject<PaneviewApi | undefined>) {
+  grid.addPanel({
+    id: 'panes',
+    component: 'panes',
+    params: {api},
+    maximumWidth: 800,
     size: 200,
     position: {
-      direction: 'below',
-      referencePanel: 'content',
+      direction: 'left',
+      referencePanel: 'dock',
     },
   });
 }
 
-export function openFileTree(fs: FileSystemAPI, section: PaneviewApi, content: DockviewApi, sync: SyncInstance) {
-  const filetree = section.addPanel({
+export function openTerminal(shell: ShellInstance, grid: GridviewApi, dock: DockviewApi) {
+  grid.addPanel({
+    id: 'terminal',
+    component: 'terminal',
+    params: {dock, shell},
+    minimumHeight: 100,
+    size: 200,
+    position: {
+      direction: 'below',
+      referencePanel: 'dock',
+    },
+  });
+}
+
+export function openFileTree(fs: FileSystemAPI, grid: PaneviewApi, dock: DockviewApi, sync: CollabInstance) {
+  const filetree = grid.addPanel({
     id: 'filetree',
     title: 'Explorer',
     component: 'filetree',
-    params: {content, fs, sync},
+    params: {dock, fs, sync},
     isExpanded: true,
   });
   filetree.headerVisible = false;
 }
 
-export function openUntitledFile(fs: FileSystemAPI, api: DockviewApi, sync: SyncInstance) {
+export function openUntitledFile(fs: FileSystemAPI, api: DockviewApi, sync: CollabInstance) {
   const path = './Untitled';
   api.addPanel({
     id: path,
@@ -38,7 +60,7 @@ export function openUntitledFile(fs: FileSystemAPI, api: DockviewApi, sync: Sync
   });
 }
 
-export async function openStartFile(file: FileSystemFileHandle, fs: FileSystemAPI, api: DockviewApi, sync: SyncInstance) {
+export async function openStartFile(file: FileSystemFileHandle, fs: FileSystemAPI, api: DockviewApi, sync: CollabInstance) {
   const path = `./${file.name}`;
   const contents = await (await file.getFile()).text();
   await fs.writeFile(path, contents, 'utf-8');
@@ -48,15 +70,6 @@ export async function openStartFile(file: FileSystemFileHandle, fs: FileSystemAP
     component: 'editor',
     params: {fs, path, sync},
   });
-}
-
-// TODO
-export async function openFolder(_fs: FileSystemAPI, _api: DockviewApi) {
-  // @ts-ignore
-  const dir = await globalThis.showDirectoryPicker();
-  for await (const entry of dir.values()) {
-    console.log(entry);
-  }
 }
 
 export function createPreviewOpener(api: DockviewApi) {
@@ -83,10 +96,9 @@ export function createPreviewOpener(api: DockviewApi) {
   };
 }
 
-export function createFileOpener(api: DockviewApi, fs: FileSystemAPI, sync: SyncInstance) {
+export function createFileOpener(api: DockviewApi, fs: FileSystemAPI, sync: CollabInstance) {
   return async (path: string, name: string) => {
     const contents = await fs.readFile(path, 'utf-8');
-    console.log('createFileOpener', contents)
     const panel = api.getPanel(path);
     if (panel) {
       panel.api.setActive();

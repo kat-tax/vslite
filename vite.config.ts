@@ -16,11 +16,12 @@ export default defineConfig({
       : reactSWC(),
   ],
   build: {
-    chunkSizeWarningLimit: 750,
+    chunkSizeWarningLimit: 3500,
   },
   server: {
-    strictPort: true,
     port: 5101,
+    host: globalThis.process?.env.VITE_HOST || 'localhost',
+    strictPort: true,
     headers: {
       'Cross-Origin-Embedder-Policy': 'require-corp',
       'Cross-Origin-Opener-Policy': 'same-origin',

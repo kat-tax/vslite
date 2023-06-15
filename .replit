@@ -93,5 +93,4 @@ support = true
   type = "pwa-node"
 
   [debugger.interactive.launchMessage.arguments.env]
-  IS_RAY_AWESOME = "yes"
-
+  VSLITE = "true"

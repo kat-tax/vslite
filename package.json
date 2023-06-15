@@ -1,7 +1,7 @@
 {
   "private": true,
   "name": "vslite",
-  "version": "1.1.0",
+  "version": "1.2.0",
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -23,7 +23,6 @@
     "xterm-addon-fit": "^0.7.0",
     "y-monaco": "^0.1.4",
     "y-webrtc": "^10.2.5",
-    "y-websocket": "^1.5.0",
     "yjs": "^13.6.2"
   },
   "devDependencies": {
@@ -38,12 +37,12 @@
     "vite-plugin-rewrite-all": "^1.0.1"
   },
   "prettier": {
-    "printWidth": 100,
     "semi": true,
     "singleQuote": true,
     "bracketSpacing": false,
     "trailingComma": "all",
-    "arrowParens": "avoid"
+    "arrowParens": "avoid",
+    "printWidth": 200
   },
   "pnpm": {
     "overrides": {
