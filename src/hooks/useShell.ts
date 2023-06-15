@@ -2,9 +2,9 @@ import {useState, useCallback, useEffect} from 'react';
 import {WebContainer} from '@webcontainer/api';
 import {Terminal} from 'xterm';
 import {FitAddon} from 'xterm-addon-fit';
-import {startFiles} from '../utils/webcontainer';
+import {startFiles} from '../modules/webcontainer';
 import {useDarkMode} from '../hooks/useDarkMode';
-import {FileTreeState} from '../components/FileTree'
+import {FileTreeState} from '../components/FileTree';
 import Debug from '../utils/debug';
 
 const debug = Debug('useShell');
@@ -16,7 +16,11 @@ export interface ShellInstance {
   container: WebContainer | null,
   terminal: Terminal | null,
   process: WebContainerProcess | null,
-  start: (root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => void,
+  start: (
+    root: HTMLElement,
+    panel: GridviewPanelApi,
+    onServerReady?: ServerReadyHandler,
+  ) => void,
 }
 
 export type ServerReadyHandler = (url: string, port: number) => void;

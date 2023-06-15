@@ -1,11 +1,11 @@
 {
+  "include": ["vite.config.ts"],
   "compilerOptions": {
-    "composite": true,
-    "skipLibCheck": true,
     "target": "ES2022",
     "module": "ESNext",
     "moduleResolution": "node",
-    "allowSyntheticDefaultImports": true
-  },
-  "include": ["vite.config.ts"]
+    "allowSyntheticDefaultImports": true,
+    "skipLibCheck": true,
+    "composite": true
+  }
 }

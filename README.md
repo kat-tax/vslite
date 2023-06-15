@@ -2,11 +2,14 @@
 
 > More than Monaco, less than VSCode
 
-### Try it out
+### How do I use it?
 
-https://vslite.dev
+- https://vslite.dev (normal instance)
+- https://vslite.dev/~/gh/kat-tax/vslite.git (clones git repo & installs deps)
 
-### How to run locally
+> *... then just run commands in the terminal like normal*
+
+### Running locally
 
 ```sh
 pnpm i       # Install dependencies
