@@ -11,8 +11,13 @@ export async function getDirAsTree(
   root: TreeItem<string>,
   db: Record<TreeItemIndex, TreeItem<string>>,
 ) {
-  const dir = await fs.readdir(path, {withFileTypes: true});
-  if (parent === 'root') db.root = root;
+  const dirAll = await fs.readdir(path, {withFileTypes: true});
+  const dir = dirAll.filter((item) => !item.name.startsWith('.')); // hide hidden files
+  debug('getDirAsTree() dir', dir)
+  if (parent === 'root') {
+    root.children = [];
+    db.root = root;
+  }
   dir.forEach(item => {
     const isDir = item.isDirectory();
     const itemPath = `${path}/${item.name}`;
@@ -27,7 +32,7 @@ export async function getDirAsTree(
     if (parent) db?.[parent]?.children?.push(itemPath);
     if (isDir) return getDirAsTree(fs, itemPath, itemPath, root, db);
   });
-  debug('utils/webcontainer', db)
+  debug('getDirAsTree() db', db)
   return db;
 }
 

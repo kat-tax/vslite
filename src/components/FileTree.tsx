@@ -24,7 +24,7 @@ const root: RCT.TreeItem<string> = {
   isFolder: true,
   canMove: false,
   canRename: false,
-  children: [],
+  children: [], // TODO: Gets mutated by webcontainer.ts/getDirAsTree()
 };
 
 export const FileTreeState = {
@@ -94,9 +94,11 @@ class TreeProvider<T = any> implements RCT.TreeDataProvider {
     // const changed: Partial<Record<RCT.TreeItemIndex, RCT.TreeItem<T>>> = diff(this.data.items, items);
     // console.log(changed);
     
-
+    debug('updateItems items', items)
     this.data = {items};
-    this.onDidChangeTreeDataEmitter.emit(Object.keys(items));
+    //this.onDidChangeTreeDataEmitter.emit(Object.keys(items));
+    this.onDidChangeTreeDataEmitter.emit(['root']);
+    
     // this.onChangeItemChildren('root', Object.keys(this.data.items).filter(i => i !== 'root'));
 
     // update sub children
