@@ -37,6 +37,14 @@
     "vite-plugin-node-polyfills": "^0.9.0",
     "vite-plugin-rewrite-all": "^1.0.1"
   },
+  "prettier": {
+    "printWidth": 100,
+    "semi": true,
+    "singleQuote": true,
+    "bracketSpacing": false,
+    "trailingComma": "all",
+    "arrowParens": "avoid"
+  },
   "pnpm": {
     "overrides": {
       "dockview-core": "https://pkg.csb.dev/mathuo/dockview/commit/2156a1dd/dockview-core"

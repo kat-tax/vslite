@@ -4,6 +4,10 @@ import {Terminal} from 'xterm';
 import {FitAddon} from 'xterm-addon-fit';
 import {startFiles} from '../utils/webcontainer';
 import {useDarkMode} from '../hooks/useDarkMode';
+import {FileTreeState} from '../components/FileTree'
+import Debug from '../utils/debug';
+
+const debug = Debug('useShell');
 
 import type {WebContainerProcess} from '@webcontainer/api';
 import type {GridviewPanelApi} from 'dockview';
@@ -35,7 +39,7 @@ export function useShell(): ShellInstance {
 
   const start = useCallback(async (root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => {
     if (container) return;
-    console.log('Booting...');
+    debug('Booting...');
     const shell = await WebContainer.boot({workdirName: 'vslite'});    
     const terminal = new Terminal({convertEol: true, theme});
     const addon = new FitAddon();
@@ -46,12 +50,23 @@ export function useShell(): ShellInstance {
     let watchReady = false;
     const watch = await shell.spawn('npx', ['-y', 'chokidar-cli', '.', '-i', '"(**/(node_modules|.git|_tmp_)**)"']);
     watch.output.pipeTo(new WritableStream({
-      write(data) {
+      async write(data) {
+        const type: string = data.split(':').at(0) || ''
         if (watchReady) {
-          console.log('Change detected: ', data);
+          debug('Change detected: ', data);
         } else if (data.includes('Watching "."')) {
-          console.log('File watcher ready.');
+          debug('File watcher ready.');
           watchReady = true;
+        }
+        switch (type) {
+          case 'change':
+            break;
+          case 'add':
+          case 'unlink':
+          case 'addDir':
+          case 'unlinkDir':
+          default:
+            FileTreeState.refresh(data);
         }
       }
     }));
@@ -62,6 +77,7 @@ export function useShell(): ShellInstance {
     const input = jsh.input.getWriter();
     await init.read();
     await input.write(`alias git='npx -y g4c@stable'\n\f`);
+    await input.write(`alias vslite-clone='git clone github.com/kat-tax/vslite'\n\f`)
     init.releaseLock();
     // Pipe terminal to shell and vice versa
     terminal.onData(data => {input.write(data)});
@@ -83,7 +99,7 @@ export function useShell(): ShellInstance {
     shell.on('server-ready', (port, url) => onServerReady && onServerReady(url, port));
     setContainer(shell);
     setTerminal(terminal);
-    console.log('Done.');
+    debug('Done.');
   }, []);
 
   return {terminal, container, process, start};
