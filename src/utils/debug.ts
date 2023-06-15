@@ -1,4 +1,5 @@
 // Isomorphic minimal debug package compatible with npm:debug
+// TODO: Vite uses picomatch... we could borrow it
 export const NS = 'vslite'
 const CONFIG = globalThis.localStorage?.debug ?
   globalThis.localStorage?.debug :

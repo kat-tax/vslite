@@ -25,6 +25,6 @@ export default defineConfig({
       'Cross-Origin-Embedder-Policy': 'require-corp',
       'Cross-Origin-Opener-Policy': 'same-origin',
     },
-    host: globalThis.process?.env.REPL_HOME ? true : 'localhost'
+    host: globalThis.process?.env.VITE_HOST || 'localhost'
   },
 });

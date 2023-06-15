@@ -29,6 +29,7 @@ npm_config_prefix = "/home/runner/$REPL_SLUG/.config/npm/node_global" # Global i
 npm_config_yes="true" # This is a safe space, don't ask stupid questions
 NODE_OPTIONS="--max_old_space_size=384"
 PNPM_HOME = "/home/runner/$REPL_SLUG/.config/pnpm"
+VITE_HOST = "0.0.0.0"
 # EDITOR="replit-git-editor" # Not reliable, use curl replspace instead
 #NODE_NO_WARNINGS="1"
 

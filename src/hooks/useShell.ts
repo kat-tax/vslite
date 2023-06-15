@@ -5,6 +5,9 @@ import {FitAddon} from 'xterm-addon-fit';
 import {startFiles} from '../utils/webcontainer';
 import {useDarkMode} from '../hooks/useDarkMode';
 import {FileTreeState} from '../components/FileTree'
+import Debug from '../utils/debug';
+
+const debug = Debug('useShell');
 
 import type {WebContainerProcess} from '@webcontainer/api';
 import type {GridviewPanelApi} from 'dockview';
@@ -36,7 +39,7 @@ export function useShell(): ShellInstance {
 
   const start = useCallback(async (root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => {
     if (container) return;
-    console.log('Booting...');
+    debug('Booting...');
     const shell = await WebContainer.boot({workdirName: 'vslite'});    
     const terminal = new Terminal({convertEol: true, theme});
     const addon = new FitAddon();
@@ -49,9 +52,9 @@ export function useShell(): ShellInstance {
     watch.output.pipeTo(new WritableStream({
       async write(data) {
         if (watchReady) {
-          console.log('Change detected: ', data);
+          debug('Change detected: ', data);
         } else if (data.includes('Watching "."')) {
-          console.log('File watcher ready.');
+          debug('File watcher ready.');
           watchReady = true;
         }
         FileTreeState.refresh(data)
@@ -86,7 +89,7 @@ export function useShell(): ShellInstance {
     shell.on('server-ready', (port, url) => onServerReady && onServerReady(url, port));
     setContainer(shell);
     setTerminal(terminal);
-    console.log('Done.');
+    debug('Done.');
   }, []);
 
   return {terminal, container, process, start};
