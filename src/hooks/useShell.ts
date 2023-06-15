@@ -51,13 +51,23 @@ export function useShell(): ShellInstance {
     const watch = await shell.spawn('npx', ['-y', 'chokidar-cli', '.', '-i', '"(**/(node_modules|.git|_tmp_)**)"']);
     watch.output.pipeTo(new WritableStream({
       async write(data) {
+        const type: string = data.split(':').at(0) || ''
         if (watchReady) {
           debug('Change detected: ', data);
         } else if (data.includes('Watching "."')) {
           debug('File watcher ready.');
           watchReady = true;
         }
-        FileTreeState.refresh(data)
+        switch (type) {
+          case 'change':
+            break;
+          case 'add':
+          case 'unlink':
+          case 'addDir':
+          case 'unlinkDir':
+          default:
+            FileTreeState.refresh(data);
+        }
       }
     }));
     // Start shell
