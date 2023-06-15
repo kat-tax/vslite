@@ -3,10 +3,12 @@ import {initEditor, getLanguageFromFileName} from '../utils/monaco';
 import {useDarkMode} from '../hooks/useDarkMode';
 
 import type {FileSystemAPI} from '@webcontainer/api';
+import type {SyncInstance} from '../hooks/useSync';
 
 interface EditorProps {
   fs: FileSystemAPI,
   path: string,
+  sync: SyncInstance,
 }
 
 export function Editor(props: EditorProps) {
@@ -17,7 +19,7 @@ export function Editor(props: EditorProps) {
       theme={isDark ? 'vs-dark' : 'vs-light'}
       options={{readOnly: true, padding: {top: 10}}}
       language={getLanguageFromFileName(props.path)}
-      onMount={(editor, monaco) => initEditor(editor, monaco, props.fs, props.path)}
+      onMount={(editor, monaco) => initEditor(editor, monaco, props.fs, props.path, props.sync)}
       onChange={(value) => props.fs.writeFile(props.path, value || '', 'utf-8')}
     />
   );

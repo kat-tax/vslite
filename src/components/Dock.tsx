@@ -5,6 +5,7 @@ import {Editor} from './Editor';
 import {FileTree} from './FileTree';
 import {Terminal} from './Terminal';
 import {Watermark} from './Watermark';
+import {useSync} from '../hooks/useSync';
 import {useShell} from '../hooks/useShell';
 import {useDarkMode} from '../hooks/useDarkMode';
 import {useLaunchQueue} from '../hooks/useLaunchQueue';
@@ -14,6 +15,7 @@ import * as dock from '../utils/dock';
 import type {DockviewApi, GridviewApi, PaneviewApi, PanelCollection, IGridviewPanelProps, IPaneviewPanelProps, IDockviewPanelProps} from 'dockview';
 import type {FileSystemAPI} from '@webcontainer/api';
 import type {ShellInstance} from '../hooks/useShell';
+import type {SyncInstance} from '../hooks/useSync';
 
 export function Dock() {
   const shell = useShell();
@@ -26,6 +28,7 @@ export function Dock() {
   const panels = useRef<PaneviewApi>();
   const launch = useLaunchQueue();
   const isDark = useDarkMode();
+  const sync = useSync(shell);
 
   // Open terminal when shell is ready
   useEffect(() => {
@@ -41,7 +44,7 @@ export function Dock() {
     if (initFileTree.current) return;
     if (shell.container?.fs && panels.current && content.current) {
       initFileTree.current = true;
-      dock.openFileTree(shell.container.fs, panels.current, content.current);
+      dock.openFileTree(shell.container.fs, panels.current, content.current, sync);
     }
   }, [shell]);
 
@@ -53,9 +56,9 @@ export function Dock() {
     if (!fs || !api || !monaco) return;
     // Open files
     if (launch.files.length > 0) {
-      launch.files.forEach(file => {
-        dock.openFileEditor(file, fs, api);
-      });
+      launch.files.forEach(file =>
+        dock.openStartFile(file, fs, api, sync));
+        // TODO: ask for containing folder access
     // Execute action
     } else if (launch.action) {
       switch (launch.action) {
@@ -65,9 +68,9 @@ export function Dock() {
           break;
         }
       }
-    // Open blank file
-    } else {
-      dock.openUntitledEditor(fs, api);
+    // Open blank file (if no URL)
+    } else if (location.pathname === '/') {
+      dock.openUntitledFile(fs, api, sync);
     }
     initLaunch.current = true;
   }, [monaco, launch, shell]);
@@ -101,11 +104,8 @@ export function Dock() {
 }
 
 const contentComponents: PanelCollection<IDockviewPanelProps> = {
-  editor: (props: IDockviewPanelProps<{fs: FileSystemAPI, path: string}>) => (
-    <Editor
-      fs={props.params.fs}
-      path={props.params.path}
-    />
+  editor: (props: IDockviewPanelProps<{fs: FileSystemAPI, path: string, sync: SyncInstance}>) => (
+    <Editor fs={props.params.fs} path={props.params.path} sync={props.params.sync}/>
   ),
   preview: (props: IDockviewPanelProps<{url: string}>) => (
     // @ts-ignore
@@ -137,12 +137,11 @@ const sectionComponents: PanelCollection<IGridviewPanelProps> = {
 };
 
 const paneComponents: PanelCollection<IPaneviewPanelProps> = {
-  filetree: (props: IPaneviewPanelProps<{content: DockviewApi, fs: FileSystemAPI, rev: number}>) => (
+  filetree: (props: IPaneviewPanelProps<{content: DockviewApi, fs: FileSystemAPI, sync: SyncInstance}>) => (
     <FileTree
       fs={props.params.fs}
-      rev={props.params.rev}
       onRenameItem={dock.createFileRenameHandler(props.params.content, props.params.fs)}
-      onTriggerItem={dock.createFileOpener(props.params.content, props.params.fs)}
+      onTriggerItem={dock.createFileOpener(props.params.content, props.params.fs, props.params.sync)}
     />
   ),
 };

@@ -13,7 +13,6 @@ const debug = Debug('FileTree')
 
 interface FileTreeProps {
   fs: FileSystemAPI,
-  rev: number,
   onRenameItem: (path: string, name: string) => void,
   onTriggerItem: (path: string, name: string) => void,
 }

@@ -1,6 +1,7 @@
 import type {DockviewApi, GridviewApi, PaneviewApi} from 'dockview';
 import type {FileSystemAPI} from '@webcontainer/api';
 import type {ShellInstance} from '../hooks/useShell';
+import type {SyncInstance} from '../hooks/useSync';
 
 export function openTerminal(shell: ShellInstance, section: GridviewApi, content: DockviewApi) {
   section.addPanel({
@@ -16,28 +17,28 @@ export function openTerminal(shell: ShellInstance, section: GridviewApi, content
   });
 }
 
-export function openFileTree(fs: FileSystemAPI, section: PaneviewApi, content: DockviewApi) {
+export function openFileTree(fs: FileSystemAPI, section: PaneviewApi, content: DockviewApi, sync: SyncInstance) {
   const filetree = section.addPanel({
     id: 'filetree',
     title: 'Explorer',
     component: 'filetree',
-    params: {content, fs, rev: 0},
+    params: {content, fs, sync},
     isExpanded: true,
   });
   filetree.headerVisible = false;
 }
 
-export function openUntitledEditor(fs: FileSystemAPI, api: DockviewApi) {
+export function openUntitledFile(fs: FileSystemAPI, api: DockviewApi, sync: SyncInstance) {
   const path = './Untitled';
   api.addPanel({
     id: path,
     title: 'Untitled',
     component: 'editor',
-    params: {fs, path},
+    params: {fs, path, sync},
   });
 }
 
-export async function openFileEditor(file: FileSystemFileHandle, fs: FileSystemAPI, api: DockviewApi) {
+export async function openStartFile(file: FileSystemFileHandle, fs: FileSystemAPI, api: DockviewApi, sync: SyncInstance) {
   const path = `./${file.name}`;
   const contents = await (await file.getFile()).text();
   await fs.writeFile(path, contents, 'utf-8');
@@ -45,7 +46,7 @@ export async function openFileEditor(file: FileSystemFileHandle, fs: FileSystemA
     id: path,
     title: file.name,
     component: 'editor',
-    params: {fs, path},
+    params: {fs, path, sync},
   });
 }
 
@@ -82,9 +83,10 @@ export function createPreviewOpener(api: DockviewApi) {
   };
 }
 
-export function createFileOpener(api: DockviewApi, fs: FileSystemAPI) {
+export function createFileOpener(api: DockviewApi, fs: FileSystemAPI, sync: SyncInstance) {
   return async (path: string, name: string) => {
-    const contents = await fs.readFile(path);
+    const contents = await fs.readFile(path, 'utf-8');
+    console.log('createFileOpener', contents)
     const panel = api.getPanel(path);
     if (panel) {
       panel.api.setActive();
@@ -93,7 +95,7 @@ export function createFileOpener(api: DockviewApi, fs: FileSystemAPI) {
         id: path,
         title: name,
         component: 'editor',
-        params: {fs, path, contents},
+        params: {fs, path, contents, sync},
       });
     }
   };
