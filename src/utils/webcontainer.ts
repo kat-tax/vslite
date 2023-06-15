@@ -1,5 +1,8 @@
 import type {FileSystemAPI, FileSystemTree} from '@webcontainer/api';
 import type {TreeItem, TreeItemIndex} from 'react-complex-tree';
+import Debug from '../utils/debug';
+
+const debug = Debug('FileTree')
 
 export async function getDirAsTree(
   fs: FileSystemAPI,
@@ -24,6 +27,7 @@ export async function getDirAsTree(
     if (parent) db?.[parent]?.children?.push(itemPath);
     if (isDir) return getDirAsTree(fs, itemPath, itemPath, root, db);
   });
+  debug('utils/webcontainer', db)
   return db;
 }
 

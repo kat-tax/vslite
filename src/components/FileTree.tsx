@@ -36,22 +36,15 @@ export function FileTree(props: FileTreeProps) {
   const provider = useRef<TreeProvider<string>>(new TreeProvider({root}));
 
   const refresh = async (updateMessage?: string) => {
+    debug('refresh updateMessage', updateMessage);
     const data = await getDirAsTree(props.fs, '.', 'root', root, {});
-    debug('refresh data', data, updateMessage)
-    // const newData: Record<RCT.TreeItemIndex, RCT.TreeItem<string>> = {}
-    // for (const item of Object.values(data)) {
-    //   if (item.index.includes('/.')) {
-    //     console.log('bad item', item)
-    //   } else {
-    //     newData[item.index] = item
-    //   }
-    // }
-    try { provider.current.updateItems(data) } catch {}
+    debug('refresh getDirAsTree', data);
+    provider.current.updateItems(data)
   };
   FileTreeState.refresh = debounce(refresh, 2000)
 
   useEffect(() => {
-    // refresh();
+    // refresh(); // TODO: what does this do?
     //const i = setInterval(refresh, 200);
     //return () => clearInterval(i);
   }, []);
@@ -69,10 +62,13 @@ export function FileTree(props: FileTreeProps) {
           getItemTitle={item => item.data}
           onPrimaryAction={item => props.onTriggerItem(item.index.toString(), item.data)}
           onRenameItem={(item, name) => props.onRenameItem(item.index.toString(), name)}
-          onMissingItems={(itemIds) => console.log('missing', itemIds)}
+          // onMissingItems={(itemIds) => console.log('missing', itemIds)}
           onDrop={(item, target) => console.log('drop', item, target)}
           onExpandItem={(item) => { console.log('expand', item); FileTreeState.refresh() }}
-          viewState={{}}>
+          viewState={{
+            'filetree': {},
+          }}
+        >
           <Tree treeId="filetree" treeLabel="Explorer" rootItem="root"/>
         </UncontrolledTreeEnvironment>
       </div>
@@ -89,6 +85,7 @@ class TreeProvider<T = any> implements RCT.TreeDataProvider {
     items: Record<RCT.TreeItemIndex, RCT.TreeItem<T>>,
     setItemName?: (item: RCT.TreeItem<T>, newName: string) => RCT.TreeItem<T>,
   ) {
+    debug('TreeProvider constructor', items);
     this.data = {items};
     this.setItemName = setItemName;
   }
@@ -96,9 +93,11 @@ class TreeProvider<T = any> implements RCT.TreeDataProvider {
   public async updateItems(items: Record<RCT.TreeItemIndex, RCT.TreeItem<T>>) {
     // const changed: Partial<Record<RCT.TreeItemIndex, RCT.TreeItem<T>>> = diff(this.data.items, items);
     // console.log(changed);
+    
 
     this.data = {items};
-    this.onChangeItemChildren('root', Object.keys(this.data.items).filter(i => i !== 'root'));
+    this.onDidChangeTreeDataEmitter.emit(Object.keys(items));
+    // this.onChangeItemChildren('root', Object.keys(this.data.items).filter(i => i !== 'root'));
 
     // update sub children
     /*for (const key of Object.keys(changed)) {
@@ -110,23 +109,25 @@ class TreeProvider<T = any> implements RCT.TreeDataProvider {
   }
 
   public async getTreeItem(itemId: RCT.TreeItemIndex): Promise<RCT.TreeItem> {
+    debug('getTreeItem', itemId, this.data.items[itemId]);
     return this.data.items[itemId];
   }
 
-  public async onChangeItemChildren(itemId: RCT.TreeItemIndex, newChildren: RCT.TreeItemIndex[]): Promise<void> {
-    this.data.items[itemId].children = newChildren;
-    this.onDidChangeTreeDataEmitter.emit([itemId]);
-  }
+  // public async onChangeItemChildren(itemId: RCT.TreeItemIndex, newChildren: RCT.TreeItemIndex[]): Promise<void> {
+  //   this.data.items[itemId].children = newChildren;
+  //   this.onDidChangeTreeDataEmitter.emit([itemId]);
+  // }
 
   public onDidChangeTreeData(listener: (changedItemIds: RCT.TreeItemIndex[]) => void): RCT.Disposable {
+    debug('onDidChangeTreeData items', this.data.items);
     const handlerId = this.onDidChangeTreeDataEmitter.on(payload => listener(payload));
     return {dispose: () => this.onDidChangeTreeDataEmitter.off(handlerId)};
   }
 
-  public async onRenameItem(item: RCT.TreeItem<any>, name: string): Promise<void> {
-    if (this.setItemName) {
-      this.data.items[item.index] = this.setItemName(item, name);
-      this.onDidChangeTreeDataEmitter.emit([item.index]);
-    }
-  }
+  // public async onRenameItem(item: RCT.TreeItem<any>, name: string): Promise<void> {
+  //   if (this.setItemName) {
+  //     this.data.items[item.index] = this.setItemName(item, name);
+  //     this.onDidChangeTreeDataEmitter.emit([item.index]);
+  //   }
+  // }
 }

@@ -8,3 +8,7 @@ import {Dock} from './components/Dock';
 
 const el = document.getElementById('root');
 el && createRoot(el).render(<Dock/>);
+
+if (import.meta.env.DEV && !globalThis.localStorage?.debug) {
+  console.log('To enable debug logging, use', '\`localStorage.debug = "vslite"\`')
+}

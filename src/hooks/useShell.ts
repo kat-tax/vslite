@@ -50,11 +50,11 @@ export function useShell(): ShellInstance {
       async write(data) {
         if (watchReady) {
           console.log('Change detected: ', data);
-          FileTreeState.refresh(data)
         } else if (data.includes('Watching "."')) {
           console.log('File watcher ready.');
           watchReady = true;
         }
+        FileTreeState.refresh(data)
       }
     }));
     // Start shell
