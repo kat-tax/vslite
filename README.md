@@ -19,11 +19,12 @@ pnpm build   # Build production bundle
 
 ### Powered by...
 
-- [WebContainers](https://webcontainers.io) _(the shell)_
-- [Monaco React](https://monaco-react.surenatoyan.com) _(the editor)_
+- [G4C](https://gitlab.com/vblip/g4c) _(git support)_
 - [Xterm.js](https://xtermjs.org) _(the terminal)_
+- [Monaco React](https://monaco-react.surenatoyan.com) _(the editor)_
+- [WebContainers](https://webcontainers.io) _(the shell)_
 - [Dockview](https://dockview.dev) _(the docking ui)_
-- [React Complex Tree](https://rct.lukasbach.com) _(the file tree)_
+- [RCT](https://rct.lukasbach.com) _(the file tree ui)_
 
 ### Community
 
