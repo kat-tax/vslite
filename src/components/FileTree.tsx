@@ -83,7 +83,7 @@ class TreeProvider<T = any> implements RCT.TreeDataProvider {
   public async updateItems(items: Record<RCT.TreeItemIndex, RCT.TreeItem<T>>) {
     debug('updateItems items', items)
     this.data = {items};
-    this.onDidChangeTreeDataEmitter.emit(['root']);
+    this.onDidChangeTreeDataEmitter.emit(Object.keys(items));
   }
 
   public async getTreeItem(itemId: RCT.TreeItemIndex): Promise<RCT.TreeItem> {
