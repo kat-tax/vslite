@@ -99,8 +99,8 @@ export function useShell(): ShellInstance {
 
     // Git repo (clone repo and install)
     if (location.pathname.startsWith('/~/')) {
-      const repo = location.pathname.replace('/~/', 'https://');
-      await input.write(`git clone ${repo} './' && ni\n`);
+      const repo = location.pathname.replace('/~/', '');
+      await input.write(`git clone '${repo}' './' && ni\n`);
     }
     terminal.clear();
     terminal.open(root); // Clear terminal and display
