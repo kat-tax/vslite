@@ -5,6 +5,7 @@ import {FitAddon} from 'xterm-addon-fit';
 import {startFiles} from '../modules/webcontainer';
 import {useDarkMode} from '../hooks/useDarkMode';
 import {FileTreeState} from '../components/FileTree';
+import { getConfig } from '../modules/config';
 import Debug from '../utils/debug';
 
 const debug = Debug('useShell');
@@ -82,8 +83,15 @@ export function useShell(): ShellInstance {
     const init = jsh.output.getReader();
     const input = jsh.input.getWriter();
     await init.read();
-    await input.write(`alias git='npx -y g4c@stable'\n\f`);
-    await input.write(`alias vslite-clone='git clone github.com/kat-tax/vslite'\n\f`)
+    await input.write(`alias git='npx -y g4c@stable'\n\r`);
+    await input.write(`alias vslite-clone='git clone github.com/kat-tax/vslite'\n\r`)
+
+    const config = getConfig()
+    if (location.pathname === '/') {
+      for (const [key, val] of Object.entries(config.rootSecrets)) {
+        await input.write(`export ${key}='${val}'\n\r`)
+      }
+    }
     init.releaseLock();
     // Pipe terminal to shell and vice versa
     terminal.onData(data => {input.write(data)});
@@ -91,8 +99,8 @@ export function useShell(): ShellInstance {
     setTimeout(async () => {
       // Git repo (clone repo and install)
       if (location.pathname.startsWith('/~/')) {
-        const repo = location.pathname.replace('/~/', 'https://');
-        await input.write(`git clone ${repo} './' && npx -y @antfu/ni\n`);
+        const repo = location.pathname.replace('/~/', '');
+        await input.write(`git clone '${repo}' './' && npx -y @antfu/ni\n\r`);
       }
       // Clear terminal and display
       terminal.clear();
