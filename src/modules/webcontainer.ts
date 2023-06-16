@@ -54,13 +54,9 @@ export async function openFolder(_fs: FileSystemAPI, _api: DockviewApi) {
 }
 
 export const startFiles: FileSystemTree = {};
-
 export const jshRC: string = `
 export PNPM_HOME="/home/.pnpm"
 export PATH="/bin:/usr/bin:/usr/local/bin:/home/.pnpm"
-alias git='npx -y g4c@stable'
+alias git='npx -y g4c@stable --'
 alias ni='npx -y --package=@antfu/ni -- ni'
-alias nr='npx -y --package=@antfu/ni -- nr'
-
-alias vslite-clone='git clone github.com/kat-tax/vslite'
 `;

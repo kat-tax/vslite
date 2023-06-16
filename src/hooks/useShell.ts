@@ -1,16 +1,16 @@
-import {useState, useCallback, useEffect} from 'react';
-import {WebContainer} from '@webcontainer/api';
-import {Terminal} from 'xterm';
-import {FitAddon} from 'xterm-addon-fit';
-import {startFiles, jshRC} from '../modules/webcontainer';
-import {useDarkMode} from '../hooks/useDarkMode';
-import {FileTreeState} from '../components/FileTree';
+import { useState, useCallback, useEffect } from 'react';
+import { WebContainer } from '@webcontainer/api';
+import { Terminal } from 'xterm';
+import { FitAddon } from 'xterm-addon-fit';
+import { startFiles, jshRC } from '../modules/webcontainer';
+import { useDarkMode } from '../hooks/useDarkMode';
+import { FileTreeState } from '../components/FileTree';
 import Debug from '../utils/debug';
 
 const debug = Debug('useShell');
 
-import type {WebContainerProcess} from '@webcontainer/api';
-import type {GridviewPanelApi} from 'dockview';
+import type { WebContainerProcess } from '@webcontainer/api';
+import type { GridviewPanelApi } from 'dockview';
 
 export interface ShellInstance {
   container: WebContainer | null,
@@ -31,8 +31,8 @@ export function useShell(): ShellInstance {
   const [process, setProcess] = useState<WebContainerProcess | null>(null);
   const isDark = useDarkMode();
   const theme = isDark
-    ? {background: '#181818'}
-    : {background: '#f3f3f3', foreground: '#000', cursor: '#666'};
+    ? { background: '#181818' }
+    : { background: '#f3f3f3', foreground: '#000', cursor: '#666' };
 
   useEffect(() => {
     if (terminal) {
@@ -44,14 +44,14 @@ export function useShell(): ShellInstance {
   const start = useCallback(async (root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => {
     if (container) return;
     debug('Booting...');
-    const shell = await WebContainer.boot({workdirName: 'vslite'});
+    const shell = await WebContainer.boot({ workdirName: 'vslite' });
     await shell.fs.writeFile('.jshrc', jshRC);
     await shell.spawn('mv', ['.jshrc', '/home/.jshrc']);
     shell.mount(startFiles);
-    
-    const terminal = new Terminal({convertEol: true, theme});
+
+    const terminal = new Terminal({ convertEol: true, theme });
     const addon = new FitAddon();
-    const {cols, rows} = terminal;
+    const { cols, rows } = terminal;
     terminal.loadAddon(addon);
     // Start file watcher
     let watchReady = false;
@@ -80,20 +80,15 @@ export function useShell(): ShellInstance {
       }
     }));
     // Start shell
-    const jsh = await shell.spawn('jsh', {
-      env: {
-        // START_COMMAND: ''
-      },
-      terminal: {cols, rows}
-    });
+    const jsh = await shell.spawn('jsh', { env: {}, terminal: { cols, rows } });
     // Setup git alias
     const init = jsh.output.getReader();
     const input = jsh.input.getWriter();
     await init.read();
     init.releaseLock();
     // Pipe terminal to shell and vice versa
-    terminal.onData(data => {input.write(data)});
-    jsh.output.pipeTo(new WritableStream({write(data) {terminal.write(data)}}));
+    terminal.onData(data => { input.write(data) });
+    jsh.output.pipeTo(new WritableStream({ write(data) { terminal.write(data) } }));
 
     // Finish up
     setProcess(jsh);
@@ -107,13 +102,12 @@ export function useShell(): ShellInstance {
       const repo = location.pathname.replace('/~/', 'https://');
       await input.write(`git clone ${repo} './' && ni\n`);
     }
-    // Clear terminal and display
     terminal.clear();
-    terminal.open(root);
+    terminal.open(root); // Clear terminal and display
     addon.fit();
-    
+
     debug('Done.');
   }, []);
 
-  return {terminal, container, process, start};
+  return { terminal, container, process, start };
 }
