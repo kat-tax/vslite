@@ -61,6 +61,8 @@ export function useShell(): ShellInstance {
         } else if (data.includes('Watching "."')) {
           debug('File watcher ready.');
           watchReady = true;
+        } else {
+          debug('chokidar: ', data)
         }
         switch (type) {
           case 'change':

@@ -62,7 +62,7 @@ export function FileTree(props: FileTreeProps) {
           getItemTitle={item => item.data}
           onPrimaryAction={item => props.onTriggerItem(item.index.toString(), item.data)}
           onRenameItem={(item, name) => props.onRenameItem(item.index.toString(), name)}
-          onExpandItem={(item) => {debug('expand', item); FileTreeState.refresh()}}
+          // onExpandItem={(item) => {debug('expand', item)}}
           viewState={{filetree: {}}}>
           <Tree treeId="filetree" treeLabel="Explorer" rootItem="root"/>
         </UncontrolledTreeEnvironment>
@@ -83,7 +83,7 @@ class TreeProvider<T = any> implements RCT.TreeDataProvider {
   public async updateItems(items: Record<RCT.TreeItemIndex, RCT.TreeItem<T>>) {
     debug('updateItems items', items)
     this.data = {items};
-    this.onDidChangeTreeDataEmitter.emit(['root']);
+    this.onDidChangeTreeDataEmitter.emit(Object.keys(items));
   }
 
   public async getTreeItem(itemId: RCT.TreeItemIndex): Promise<RCT.TreeItem> {

@@ -25,7 +25,7 @@ export async function getDirAsTree(
 
   if (parent === 'root') db.root = root;
 
-  directory.forEach(item => {
+  for (const item of directory) {
     const isDir = item.isDirectory();
     const itemPath = `${path}/${item.name}`;
     db[itemPath] = {
@@ -37,8 +37,8 @@ export async function getDirAsTree(
       children: [],
     };
     if (parent) db?.[parent]?.children?.push(itemPath);
-    if (isDir) return getDirAsTree(fs, itemPath, itemPath, root, db);
-  });
+    if (isDir) await getDirAsTree(fs, itemPath, itemPath, root, db);
+  };
 
   debug('getDirAsTree() db', db);
 
