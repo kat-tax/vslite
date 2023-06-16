@@ -1,13 +1,13 @@
 import Debug from '../utils/debug';
+import { getConfig } from './config';
 
 import type {FileSystemAPI, FileSystemTree} from '@webcontainer/api';
 import type {TreeItem, TreeItemIndex} from 'react-complex-tree';
 import type {DockviewApi} from 'dockview';
 
 
-const configRaw = globalThis.localStorage?.vslite_config;
-const config = configRaw ? JSON.parse(configRaw) : {};
 const debug = Debug('webcontainer');
+const config = getConfig()
 
 export async function getDirAsTree(
   fs: FileSystemAPI,
