@@ -7,6 +7,8 @@
     "target": "ESNext",
     "module": "ESNext",
     "moduleResolution": "Node",
+    "allowSyntheticDefaultImports": true,
+    "resolveJsonModule": true,
     "isolatedModules": true,
     "skipLibCheck": true,
     "noEmit": true,

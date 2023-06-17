@@ -4,6 +4,7 @@ import {EventEmitter} from 'react-complex-tree/src/EventEmitter';
 import {getDirAsTree} from '../modules/webcontainer';
 import {useDarkMode} from '../hooks/useDarkMode';
 import {debounce} from '../utils/debounce';
+import {getIcon} from '../icons';
 
 import Debug from '../utils/debug';
 
@@ -48,6 +49,21 @@ export function FileTree(props: FileTreeProps) {
   // https://github.com/vitejs/vite-plugin-react-swc#consistent-components-exports
   Object.assign(FileTreeState, {treeEnv, refresh: debounce(refresh, 300)});
 
+  const renderItem = (item: RCT.TreeItem<any>) => {
+    const icon = getIcon(
+      item.data,
+      '',
+      item.isFolder || false,
+      item.index === 'root',
+      isDark ? 'dark' : 'light',
+    );
+    return (
+      <span className={icon}>
+        {item.data}
+      </span>
+    );
+  };
+
   return (
     <div style={{overflow: 'scroll'}}>
       <div className={isDark ? 'rct-dark' : 'rct-default'}>
@@ -60,6 +76,7 @@ export function FileTree(props: FileTreeProps) {
           canSearchByStartingTyping
           dataProvider={provider.current}
           getItemTitle={item => item.data}
+          renderItemTitle={(props) => renderItem(props.item)}
           onPrimaryAction={item => props.onTriggerItem(item.index.toString(), item.data)}
           onRenameItem={(item, name) => props.onRenameItem(item.index.toString(), name)}
           // onExpandItem={(item) => {debug('expand', item)}}
