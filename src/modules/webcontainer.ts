@@ -4,7 +4,6 @@ import type {FileSystemAPI, FileSystemTree} from '@webcontainer/api';
 import type {TreeItem, TreeItemIndex} from 'react-complex-tree';
 import type {DockviewApi} from 'dockview';
 
-
 const configRaw = globalThis.localStorage?.vslite_config;
 const config = configRaw ? JSON.parse(configRaw) : {};
 const debug = Debug('webcontainer');
