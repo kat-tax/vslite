@@ -54,6 +54,7 @@ export async function openFolder(_fs: FileSystemAPI, _api: DockviewApi) {
 }
 
 export const startFiles: FileSystemTree = {};
+
 export const jshRC: string = `
 export PNPM_HOME="/home/.pnpm"
 export PATH="/bin:/usr/bin:/usr/local/bin:/home/.pnpm"
