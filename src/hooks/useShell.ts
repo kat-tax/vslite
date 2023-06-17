@@ -87,8 +87,8 @@ export function useShell(): ShellInstance {
     await input.write(`alias vslite-clone='git clone github.com/kat-tax/vslite'\n\r`)
 
     const config = getConfig()
-    if (location.pathname === '/') {
-      for (const [key, val] of Object.entries(config?.rootSecrets)) {
+    if (location.pathname === '/' && config?.rootSecrets) {
+      for (const [key, val] of Object.entries(config.rootSecrets)) {
         await input.write(`export ${key}='${val}'\n\r`)
       }
     }
