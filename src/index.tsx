@@ -4,7 +4,10 @@ import 'xterm/css/xterm.css';
 import './index.css';
 
 import {createRoot} from 'react-dom/client';
+import {injectStyles} from './icons';
 import {Dock} from './components/Dock';
+
+injectStyles();
 
 const el = document.getElementById('root');
 el && createRoot(el).render(<Dock/>);
