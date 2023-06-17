@@ -2,9 +2,9 @@ import {useState, useCallback, useEffect} from 'react';
 import {WebContainer} from '@webcontainer/api';
 import {Terminal} from 'xterm';
 import {FitAddon} from 'xterm-addon-fit';
-import {startFiles} from '../modules/webcontainer';
 import {useDarkMode} from '../hooks/useDarkMode';
 import {FileTreeState} from '../components/FileTree';
+import {startFiles, jshRC} from '../modules/webcontainer';
 import Debug from '../utils/debug';
 
 const debug = Debug('useShell');
@@ -44,12 +44,19 @@ export function useShell(): ShellInstance {
   const start = useCallback(async (root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => {
     if (container) return;
     debug('Booting...');
-    const shell = await WebContainer.boot({workdirName: 'vslite'});    
+
+    // Setup shell
+    const shell = await WebContainer.boot({workdirName: 'vslite'});
+    await shell.fs.writeFile('.jshrc', jshRC);
+    await shell.spawn('mv', ['.jshrc', '/home/.jshrc']);
+    shell.mount(startFiles);
+
+    // Setup terminal
     const terminal = new Terminal({convertEol: true, theme});
     const addon = new FitAddon();
     const {cols, rows} = terminal;
     terminal.loadAddon(addon);
-    shell.mount(startFiles);
+
     // Start file watcher
     let watchReady = false;
     const watch = await shell.spawn('npx', ['-y', 'chokidar-cli', '.', '-i', '"(**/(node_modules|.git|_tmp_)**)"']);
@@ -76,37 +83,42 @@ export function useShell(): ShellInstance {
         }
       }
     }));
+
     // Start shell
-    const jsh = await shell.spawn('jsh', {terminal: {cols, rows}});
+    const jsh = await shell.spawn('jsh', {env: {}, terminal: {cols, rows}});
+
     // Setup git alias
     const init = jsh.output.getReader();
     const input = jsh.input.getWriter();
     await init.read();
-    await input.write(`alias git='npx -y g4c@stable'\n\f`);
-    await input.write(`alias vslite-clone='git clone github.com/kat-tax/vslite'\n\f`)
     init.releaseLock();
+
     // Pipe terminal to shell and vice versa
     terminal.onData(data => {input.write(data)});
     jsh.output.pipeTo(new WritableStream({write(data) {terminal.write(data)}}));
-    setTimeout(async () => {
-      // Git repo (clone repo and install)
-      if (location.pathname.startsWith('/~/')) {
-        const repo = location.pathname.replace('/~/', 'https://');
-        await input.write(`git clone ${repo} './' && npx -y @antfu/ni\n`);
-      }
-      // Clear terminal and display
-      terminal.clear();
-      terminal.open(root);
-      addon.fit();
-    }, 200);
-    // Finish up
-    setProcess(jsh);
+
+    // Subscribe to events
     panel.onDidDimensionsChange(() => addon.fit());
     shell.on('server-ready', (port, url) => onServerReady && onServerReady(url, port));
+
+    // Set state
     setContainer(shell);
     setTerminal(terminal);
+    setProcess(jsh);
+
+    // Git repo (clone repo and install)
+    if (location.pathname.startsWith('/~/')) {
+      const repo = location.pathname.replace('/~/', '');
+      await input.write(`git clone '${repo}' './' && ni\n`);
+    }
+
+    // Clear terminal and display
+    terminal.clear();
+    terminal.open(root);
+    addon.fit();
+
     debug('Done.');
   }, []);
 
-  return {terminal, container, process, start};
+  return { terminal, container, process, start };
 }
