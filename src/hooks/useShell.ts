@@ -88,7 +88,7 @@ export function useShell(): ShellInstance {
 
     const config = getConfig()
     if (location.pathname === '/') {
-      for (const [key, val] of Object.entries(config.rootSecrets)) {
+      for (const [key, val] of Object.entries(config?.rootSecrets)) {
         await input.write(`export ${key}='${val}'\n\r`)
       }
     }
