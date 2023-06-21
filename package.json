@@ -12,7 +12,7 @@
   "dependencies": {
     "@monaco-editor/react": "^4.5.1",
     "@webcontainer/api": "^1.1.5",
-    "dockview": "^1.7.3",
+    "dockview": "^1.7.6",
     "monaco-editor": "^0.39.0",
     "monaco-editor-auto-typings": "^0.4.4",
     "react": "^18.2.0",
@@ -43,10 +43,5 @@
     "trailingComma": "all",
     "arrowParens": "avoid",
     "printWidth": 200
-  },
-  "pnpm": {
-    "overrides": {
-      "dockview-core": "https://pkg.csb.dev/mathuo/dockview/commit/2156a1dd/dockview-core"
-    }
   }
 }
