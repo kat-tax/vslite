@@ -2,12 +2,17 @@
   "private": true,
   "name": "vslite",
   "version": "1.2.0",
+  "description": "More than Monaco, less than VSCode.",
   "type": "module",
   "scripts": {
     "dev": "vite",
     "build": "tsc && vite build",
     "preview": "vite preview",
     "lint": "eslint src --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kat-tax/vslite.git"
   },
   "dependencies": {
     "@monaco-editor/react": "^4.5.1",
