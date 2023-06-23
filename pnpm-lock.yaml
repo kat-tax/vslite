@@ -1,8 +1,5 @@
 lockfileVersion: '6.0'
 
-overrides:
-  dockview-core: https://pkg.csb.dev/mathuo/dockview/commit/2156a1dd/dockview-core
-
 dependencies:
   '@monaco-editor/react':
     specifier: ^4.5.1
