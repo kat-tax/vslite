@@ -8,8 +8,8 @@ dependencies:
     specifier: ^1.1.5
     version: 1.1.5
   dockview:
-    specifier: ^1.7.3
-    version: 1.7.3
+    specifier: ^1.7.6
+    version: 1.7.6
   monaco-editor:
     specifier: ^0.39.0
     version: 0.39.0
@@ -1036,10 +1036,14 @@ packages:
       randombytes: 2.1.0
     dev: true
 
-  /dockview@1.7.3:
-    resolution: {integrity: sha512-GGtaC0pTRX3nTa5XGUEIXInZf71COYsld25ricAptxlAMiuMH+zbVrZJQnvx2KeItahhEejPQ1sThd4u7jzzqQ==}
+  /dockview-core@1.7.6:
+    resolution: {integrity: sha512-9gerjq1tP9Cd7lZ8/mBV1LGlbApqTLUmUjmP8A6EPQIc8GzKGX3nJZxb14n1IcKtGYs0iwZOp864Ay6H+WafXQ==}
+    dev: false
+
+  /dockview@1.7.6:
+    resolution: {integrity: sha512-hcH6y/Sq4fLwf1WdT3vC9tz9aGaK1S2GOB3WBicTEn7WsRBqsHfvQzojcSPWoVA9BDAnZeYd5oRat6jjJvswhw==}
     dependencies:
-      dockview-core: '@pkg.csb.dev/mathuo/dockview/commit/2156a1dd/dockview-core'
+      dockview-core: 1.7.6
     dev: false
 
   /domain-browser@4.22.0:
@@ -1938,9 +1942,3 @@ packages:
     resolution: {integrity: sha512-rVksvsnNCdJ/ohGc6xgPwyN8eheCxsiLM8mxuE/t/mOVqJewPuO1miLpTHQiRgTKCLexL4MeAFVagts7HmNZ2Q==}
     engines: {node: '>=10'}
     dev: true
-
-  '@pkg.csb.dev/mathuo/dockview/commit/2156a1dd/dockview-core':
-    resolution: {tarball: https://pkg.csb.dev/mathuo/dockview/commit/2156a1dd/dockview-core}
-    name: dockview-core
-    version: 1.7.3
-    dev: false
