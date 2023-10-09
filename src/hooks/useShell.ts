@@ -53,7 +53,9 @@ export function useShell(): ShellInstance {
     // Get .env from localStorage
     const configRaw = globalThis.localStorage?.vslite_config;
     const config = configRaw ? JSON.parse(configRaw) : {};
-    await shell.fs.writeFile(".env", config.env);
+    if(config && config.env){
+      await shell.fs.writeFile(".env", config.env);      
+    }
     
     // Setup terminal
     const terminal = new Terminal({convertEol: true, theme});
@@ -71,13 +73,24 @@ export function useShell(): ShellInstance {
           // need to see if it is .env and read it into local storage
           if(data.match(/\.env/)){
             debug('.env changed', data);
-            const bContents = await shell.fs.readFile(".env");
-            const sContents = new TextDecoder().decode(bContents);
-            debug('contents', sContents);
             const configRaw = globalThis.localStorage?.vslite_config;
-            const config = configRaw ? JSON.parse(configRaw) : {};
-            config.env = sContents;
-            globalThis.localStorage.vslite_config = JSON.stringify(config);
+            let config = configRaw ? JSON.parse(configRaw) : {};
+          try{
+              const bContents = await shell.fs.readFile(".env");
+              const sContents = new TextDecoder().decode(bContents);
+              debug('contents', sContents);
+              if(!config){
+                config = {};
+              }
+              config.env = sContents;
+              globalThis.localStorage.vslite_config = JSON.stringify(config);  
+            }catch(e){
+              if(config && config.env){
+                delete config.env;
+                globalThis.localStorage.vslite_config = JSON.stringify(config);                
+              }
+              debug(".env file deleted", e);
+            }
           }else{
             debug('Change detected: ', data);
           }

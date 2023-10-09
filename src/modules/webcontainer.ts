@@ -57,6 +57,6 @@ export const startFiles: FileSystemTree = {};
 export const jshRC: string = `
 export PNPM_HOME="/home/.pnpm"
 export PATH="/bin:/usr/bin:/usr/local/bin:/home/.pnpm"
-alias git='npx -y --package=g4c@stable -- g4c'
+alias git='npx -y --package=git-pwa -- git'
 alias ni='npx -y --package=@antfu/ni -- ni'
 `;
