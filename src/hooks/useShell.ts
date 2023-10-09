@@ -50,7 +50,11 @@ export function useShell(): ShellInstance {
     await shell.fs.writeFile('.jshrc', jshRC);
     await shell.spawn('mv', ['.jshrc', '/home/.jshrc']);
     shell.mount(startFiles);
-
+    // Get .env from localStorage
+    const configRaw = globalThis.localStorage?.vslite_config;
+    const config = configRaw ? JSON.parse(configRaw) : {};
+    await shell.fs.writeFile(".env", config.env);
+    
     // Setup terminal
     const terminal = new Terminal({convertEol: true, theme});
     const addon = new FitAddon();
@@ -63,8 +67,20 @@ export function useShell(): ShellInstance {
     watch.output.pipeTo(new WritableStream({
       async write(data) {
         const type: string = data.split(':').at(0) || ''
-        if (watchReady) {
-          debug('Change detected: ', data);
+        if (watchReady) {          
+          // need to see if it is .env and read it into local storage
+          if(data.match(/\.env/)){
+            debug('.env changed', data);
+            const bContents = await shell.fs.readFile(".env");
+            const sContents = new TextDecoder().decode(bContents);
+            debug('contents', sContents);
+            const configRaw = globalThis.localStorage?.vslite_config;
+            const config = configRaw ? JSON.parse(configRaw) : {};
+            config.env = sContents;
+            globalThis.localStorage.vslite_config = JSON.stringify(config);
+          }else{
+            debug('Change detected: ', data);
+          }
         } else if (data.includes('Watching "."')) {
           debug('File watcher ready.');
           watchReady = true;
