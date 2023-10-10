@@ -20,6 +20,7 @@
     "dockview": "^1.7.6",
     "monaco-editor": "^0.39.0",
     "monaco-editor-auto-typings": "^0.4.4",
+    "preact-custom-element": "^4.2.1",
     "react": "npm:@preact/compat",
     "react-complex-tree": "^2.1.4",
     "react-dom": "npm:@preact/compat",
@@ -31,6 +32,7 @@
   },
   "devDependencies": {
     "@types/node": "^20.3.0",
+    "@types/preact-custom-element": "^4.0.2",
     "@types/react": "^18.2.11",
     "@types/react-dom": "^18.2.4",
     "@vitejs/plugin-react": "^4.0.0",
