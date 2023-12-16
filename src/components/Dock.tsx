@@ -74,6 +74,7 @@ const paneComponents: PanelCollection<IPaneviewPanelProps> = {
       fs={props.params.fs}
       onRenameItem={panels.createFileRenameHandler(props.params.dock, props.params.fs)}
       onTriggerItem={panels.createFileOpener(props.params.dock, props.params.fs, props.params.sync)}
+      panelApi={props.params.dock}
     />
   ),
 };

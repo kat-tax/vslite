@@ -3,15 +3,19 @@ import 'dockview/dist/styles/dockview.css';
 import 'xterm/css/xterm.css';
 import './index.css';
 
-import {createRoot} from 'react-dom/client';
 import {injectStyles} from './icons';
 import {Dock} from './components/Dock';
+import register from 'preact-custom-element';
+
+const VsliteDoc = ()=>{
+  return <Dock/>;
+}
+
+register(VsliteDoc, 'vslite-dock', [], { shadow: false });
 
 injectStyles();
-
-const el = document.getElementById('root');
-el && createRoot(el).render(<Dock/>);
-
 if (import.meta.env.DEV && !globalThis.localStorage?.debug) {
   console.log('To enable debug logging, run in console: ', '\`localStorage.debug = "vslite"\`');
 }
+
+
