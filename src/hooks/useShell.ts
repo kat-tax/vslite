@@ -9,7 +9,7 @@ import Debug from '../utils/debug';
 
 const debug = Debug('useShell');
 
-import type {WebContainerProcess} from '@webcontainer/api';
+import type {FileSystemAPI, WebContainerProcess} from '@webcontainer/api';
 import type {GridviewPanelApi} from 'dockview';
 
 export interface ShellInstance {
@@ -19,11 +19,15 @@ export interface ShellInstance {
   start: (
     root: HTMLElement,
     panel: GridviewPanelApi,
-    onServerReady?: ServerReadyHandler,
+    onServerReady: ServerReadyHandler,
   ) => void,
 }
 
-export type ServerReadyHandler = (url: string, port: number) => void;
+export type ServerReadyHandler = (
+  url: string,
+  port: number,
+  fs: FileSystemAPI,
+) => void;
 
 export function useShell(): ShellInstance {
   const [container, setContainer] = useState<WebContainer | null>(null);
@@ -41,9 +45,18 @@ export function useShell(): ShellInstance {
     }
   }, [isDark]);
 
-  const start = useCallback(async (root: HTMLElement, panel: GridviewPanelApi, onServerReady?: ServerReadyHandler) => {
+  const start = useCallback(async (
+    root: HTMLElement,
+    panel: GridviewPanelApi,
+    onServerReady: ServerReadyHandler,
+  ) => {
     if (container) return;
     debug('Booting...');
+
+    // Specific to Storybook
+    // TODO: Move to a plugin
+    let storybookUrl = '';
+    let storybookPort = -1;
 
     // Setup shell
     const shell = await WebContainer.boot({workdirName: 'vslite'});
@@ -95,11 +108,26 @@ export function useShell(): ShellInstance {
 
     // Pipe terminal to shell and vice versa
     terminal.onData(data => {input.write(data)});
-    jsh.output.pipeTo(new WritableStream({write(data) {terminal.write(data)}}));
+    jsh.output.pipeTo(new WritableStream({
+      write(data) {
+        terminal.write(data)
+        if (storybookUrl && data.includes('On your network:')) {
+          onServerReady(storybookUrl, storybookPort, shell.fs);
+        }
+      }
+    }));
 
     // Subscribe to events
     panel.onDidDimensionsChange(() => addon.fit());
-    shell.on('server-ready', (port, url) => onServerReady && onServerReady(url, port));
+    shell.on('server-ready', async (port, url) => {
+      debug('Server ready: ', port, url);
+      if (port === 6006) {
+        storybookUrl = url;
+        storybookPort = port;
+      } else {
+        onServerReady(url, port, shell.fs);
+      }
+    });
 
     // Set state
     setContainer(shell);

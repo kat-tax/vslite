@@ -74,6 +74,8 @@ export async function openStartFile(file: FileSystemFileHandle, fs: FileSystemAP
 
 export function createPreviewOpener(api: DockviewApi) {
   return (serverUrl: string, serverPort: number) => {
+    // Storybook can't be loaded immediately
+    if (serverPort !== 6006) return;
     const panel = api.getPanel(serverPort.toString());
     const title = `Port: ${serverPort}`;
     const url = `${serverUrl}?${Date.now()}`;

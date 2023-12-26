@@ -40,8 +40,12 @@ const dockComponents: PanelCollection<IDockviewPanelProps> = {
     <Editor fs={props.params.fs} path={props.params.path} sync={props.params.sync}/>
   ),
   preview: (props: IDockviewPanelProps<{url: string}>) => (
-    // @ts-ignore
-    <iframe src={props.params.url} allow="cross-origin-isolated" credentialless/>
+    <iframe
+      src={props.params.url}
+      allow="cross-origin-isolated"
+      // @ts-ignore
+      credentialless
+    />
   ),
 };
 
