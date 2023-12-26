@@ -5,7 +5,7 @@
 ### How do I use it?
 
 - https://vslite.dev (normal instance)
-- https://vslite.dev/~/gh/kat-tax/vslite.git (clones git repo & installs deps)
+- https://vslite.dev/~/gh/kat-tax/exo.git (clones git repo & installs deps)
 
 > *... then just run commands in the terminal like normal*
 
