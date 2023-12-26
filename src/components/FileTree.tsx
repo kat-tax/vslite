@@ -1,4 +1,4 @@
-import {useRef, Ref, useState} from 'react';
+import {useRef, Ref} from 'react';
 import {Tree, UncontrolledTreeEnvironment, TreeEnvironmentRef} from 'react-complex-tree';
 import {EventEmitter} from 'react-complex-tree/src/EventEmitter';
 import {getDirAsTree} from '../modules/webcontainer';
@@ -17,7 +17,6 @@ interface FileTreeProps {
   fs: FileSystemAPI,
   onRenameItem: (path: string, name: string) => void,
   onTriggerItem: (path: string, name: string) => void,
-  panelApi:any
 }
 
 const root: RCT.TreeItem<string> = {
@@ -38,13 +37,6 @@ export function FileTree(props: FileTreeProps) {
   const isDark = useDarkMode();
   const treeEnv = useRef() as Ref<TreeEnvironmentRef<any, never>>
   const provider = useRef<TreeProvider<string>>(new TreeProvider({root}));
-  const [focusedItem, setFocusedItem] = useState("");
-  props.panelApi.onDidActivePanelChange(async(panelEvent: any)=>{
-    debug("panel changed", panelEvent);
-    debug("focusedItem", focusedItem);
-    const oItem:any = await provider.current.getTreeItem(panelEvent.id);
-    setFocusedItem(oItem.index);
-  });
 
   const refresh = async (updateMessage?: string) => {
     debug('refresh updateMessage', updateMessage);
@@ -88,7 +80,7 @@ export function FileTree(props: FileTreeProps) {
           onPrimaryAction={item => props.onTriggerItem(item.index.toString(), item.data)}
           onRenameItem={(item, name) => props.onRenameItem(item.index.toString(), name)}
           // onExpandItem={(item) => {debug('expand', item)}}
-          viewState={{filetree: {focusedItem}}}>
+          viewState={{filetree: {}}}>
           <Tree treeId="filetree" treeLabel="Explorer" rootItem="root"/>
         </UncontrolledTreeEnvironment>
       </div>

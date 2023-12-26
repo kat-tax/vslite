@@ -1,4 +1,3 @@
-import { resolve } from 'path'
 import {defineConfig} from 'vite';
 import {nodePolyfills} from 'vite-plugin-node-polyfills';
 import pluginRewriteAll from 'vite-plugin-rewrite-all';
@@ -15,14 +14,6 @@ export default defineConfig({
       : reactSWC(),
   ],
   build: {
-    lib: {
-      // Could also be a dictionary or array of multiple entry points
-      entry: resolve(__dirname, 'src/index.tsx'),
-      name: 'VSLite',
-      // the proper extensions will be added
-      fileName: 'index',
-    },
- 
     chunkSizeWarningLimit: 3500,
   },
   server: {
